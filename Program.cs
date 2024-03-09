@@ -1,4 +1,19 @@
+using Microsoft.EntityFrameworkCore;
+using MyWallet.Data;
+
 var builder = WebApplication.CreateBuilder(args);
+
+builder.Services.AddDbContext<AppDbContext>(Options =>
+{
+    string host = builder.Configuration["Database:Host"] ?? string.Empty;
+    string port = builder.Configuration["Database:Port"] ?? string.Empty;
+    string username = builder.Configuration["Database:Username"] ?? string.Empty;
+    string database = builder.Configuration["Database:Database"] ?? string.Empty;
+    string password = builder.Configuration["Database:Password"] ?? string.Empty;
+
+    string connectionString = $"Host={host};Port={port};Username={username};Password={password};Database={database}";
+    Options.UseNpgsql(connectionString);
+});
 
 // Add services to the container.
 
