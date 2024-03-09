@@ -1,0 +1,39 @@
+using System;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+
+namespace MyWallet.Models
+{
+    public class PixKeys
+    {
+        [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int Id { get; set; }
+
+        [Required]
+        [StringLength(50)]
+        public required string Value { get; set; }
+
+        [Required]
+        [Column("Type")]
+        public required string Type { get; set; } // "CPF", "Email", "Phone", "Random"u
+
+        [Required]
+        public int UserId { get; set; }
+
+        [Required]
+        public int AccountId { get; set; }
+
+        [Required]
+        public int PaymentProviderId { get; set; }
+
+
+        public User? User { get; set; }
+
+        public Account? Account { get; set; }
+        public ICollection<Payments>? Payments { get; set; }
+
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+    }
+}
