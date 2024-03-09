@@ -3,6 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyWallet.Models
 {
+
+    public enum PaymentStatus
+    {
+        Pendent,
+        Approved,
+        Denied
+    }
     public class Payments
     {
 
@@ -24,6 +31,8 @@ namespace MyWallet.Models
 
         [Required]
         public int Amount { get; set; }
+
+        [EnumDataType(typeof(PaymentStatus))]
         public string Status { get; set; } = "Pendent";
 
         public DateTime CreatedAt { get; set; }

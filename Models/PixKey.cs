@@ -4,6 +4,14 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyWallet.Models
 {
+
+    public enum PixKeyType
+    {
+        CPF,
+        Email,
+        Phone,
+        Random
+    }
     public class PixKeys
     {
         [Key]
@@ -15,7 +23,7 @@ namespace MyWallet.Models
         public required string Value { get; set; }
 
         [Required]
-        [Column("Type")]
+        [EnumDataType(typeof(PixKeyType))]
         public required string Type { get; set; } // "CPF", "Email", "Phone", "Random"u
 
         [Required]
