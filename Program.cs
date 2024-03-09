@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using MyWallet.Data;
+using MyWallet.Middlewares;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -36,5 +37,7 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseMiddleware<ExceptionHandlerMiddleware>();
 
 app.Run();
