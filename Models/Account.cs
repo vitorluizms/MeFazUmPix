@@ -1,3 +1,4 @@
+using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -21,13 +22,14 @@ namespace MyWallet.Models
         [Required]
         public int Agency { get; set; }
 
-        public User? User { get; set; }
+        public Users? User { get; set; }
 
         public PaymentProvider? PaymentProvider { get; set; }
 
         public ICollection<PixKeys>? PixKeys { get; }
 
+        [DefaultValue("Now()")]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
     }
 }

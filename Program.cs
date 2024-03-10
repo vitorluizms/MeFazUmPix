@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MyWallet.Data;
 using MyWallet.Middlewares;
+using MyWallet.Repositories;
 using MyWallet.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,7 +25,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<HealthService, HealthService>();
+builder.Services.AddScoped<HealthService>();
+builder.Services.AddScoped<KeysService>();
+builder.Services.AddScoped<KeyRepository>();
+builder.Services.AddScoped<UserRepository>();
+builder.Services.AddScoped<AccountRepository>();
+builder.Services.AddScoped<AuthorizationMiddleware>();
+builder.Services.AddScoped<PaymentProviderRepository>();
 
 var app = builder.Build();
 
@@ -40,8 +47,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseMiddleware<AuthorizationMiddleware>();
 
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 

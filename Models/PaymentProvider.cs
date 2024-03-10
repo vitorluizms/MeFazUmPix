@@ -19,7 +19,7 @@ namespace MyWallet.Models
         public required string Token { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
 
         public ICollection<PixKeys>? PixKeys { get; set; }
         public ICollection<Account>? Accounts { get; set; }

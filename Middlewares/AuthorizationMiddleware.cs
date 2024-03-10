@@ -1,32 +1,25 @@
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http;
+using MyWallet.Exceptions;
+using MyWallet.Models;
+using MyWallet.Repositories;
 
 namespace MyWallet.Middlewares;
 
 public class AuthorizationMiddleware
 {
-    private readonly RequestDelegate _next;
 
-    public AuthorizationMiddleware(RequestDelegate next)
+    private readonly PaymentProviderRepository _paymentProviderRepository;
+    public AuthorizationMiddleware(PaymentProviderRepository paymentProviderRepository)
     {
-        _next = next;
+        _paymentProviderRepository = paymentProviderRepository;
     }
 
-    public async Task InvokeAsync(HttpContext context)
+    public async Task<int> ValidatePSPToken(string token)
     {
 
-        // Por exemplo, você pode fazer log de informações sobre a solicitação
-        Console.WriteLine("Middleware executado antes do controlador.");
+        if (string.IsNullOrEmpty(token)) throw new UnauthorizedError("PSP Token is missing");
 
-        // Chama o próximo middleware na pipeline
-        await _next(context);
-    }
-}
+        PaymentProvider? paymentProvider = await _paymentProviderRepository.GetPaymentProviderByToken(token) ?? throw new UnauthorizedError("Payment Provider not found");
 
-public static class AuthorizationMiddlewareExtensions
-{
-    public static IApplicationBuilder AuthorizationMiddleware(this IApplicationBuilder builder)
-    {
-        return builder.UseMiddleware<AuthorizationMiddleware>();
+        return paymentProvider.Id;
     }
 }

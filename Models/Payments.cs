@@ -30,7 +30,7 @@ namespace MyWallet.Models
         public string Status { get; set; } = "Pendent";
 
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime UpdatedAt { get; set; }
+        public DateTime? UpdatedAt { get; set; }
         public PixKeys? PixKeys { get; set; }
         public PaymentProvider? PaymentProvider { get; set; }
     }

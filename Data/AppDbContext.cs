@@ -6,7 +6,7 @@ namespace MyWallet.Data;
 
 public class AppDbContext(DbContextOptions<AppDbContext> Options) : DbContext(Options)
 {
-    public DbSet<User> User { get; set; }
+    public DbSet<Users> Users { get; set; }
     public DbSet<Account> Accounts { get; set; }
     public DbSet<PaymentProvider> PaymentProviders { get; set; }
     public DbSet<PixKeys> PixKeys { get; set; }
@@ -15,7 +15,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> Options) : DbContext(Op
     {
 
         // Validation - User CPF is Unique
-        modelBuilder.Entity<User>()
+        modelBuilder.Entity<Users>()
             .HasIndex(u => u.CPF)
             .IsUnique();
 
@@ -76,6 +76,28 @@ public class AppDbContext(DbContextOptions<AppDbContext> Options) : DbContext(Op
         modelBuilder.Entity<PixKeys>()
             .HasIndex(pk => pk.Value)
             .IsUnique();
+
+        // Set the default value for the CreatedAt field
+
+        modelBuilder.Entity<Users>()
+            .Property(u => u.CreatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+        modelBuilder.Entity<Account>()
+            .Property(a => a.CreatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+        modelBuilder.Entity<PaymentProvider>()
+            .Property(p => p.CreatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+        modelBuilder.Entity<PixKeys>()
+            .Property(pk => pk.CreatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
+
+        modelBuilder.Entity<Payments>()
+            .Property(p => p.CreatedAt)
+            .HasDefaultValueSql("CURRENT_TIMESTAMP");
     }
 
 }
