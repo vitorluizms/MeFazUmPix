@@ -8,9 +8,14 @@ namespace MyWallet.Repositories
     {
         private readonly AppDbContext _context = context;
 
-        public async Task<List<Account>> GetAccountsByCPF(int id)
+        public async Task<List<Account>> GetAccountsByUserId(int id)
         {
             return await _context.Accounts.Where(a => a.UserId.Equals(id)).ToListAsync();
+        }
+
+        public async Task<Account?> GetAccountByNumberAndAgency(int number, int agency)
+        {
+            return await _context.Accounts.FirstOrDefaultAsync(a => a.Number.Equals(number) && a.Agency.Equals(agency));
         }
 
         public async Task<Account> CreateAccount(int userId, int number, int agency, int paymentProviderId)

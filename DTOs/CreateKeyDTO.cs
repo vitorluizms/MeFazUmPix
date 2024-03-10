@@ -4,6 +4,14 @@ using MyWallet.Entities;
 
 namespace MyWallet.DTOs;
 
+public class RequestBody
+{
+    public KeyDTO? Key { get; set; }
+    public UserDTO? User { get; set; }
+    public AccountDTO? Account { get; set; }
+
+}
+
 public class CreateKeyDTO
 {
     public required KeyDTO Key { get; set; }
@@ -11,16 +19,16 @@ public class CreateKeyDTO
     public required AccountDTO Account { get; set; }
 
     public PixKeyCreationData ToEntity()
-{
-    return new PixKeyCreationData
     {
-        Type = Key.Type,
-        Value = Key.Value,
-        CPF = User.CPF,
-        Number = Account.Number,
-        Agency = Account.Agency
-    };
-}
+        return new PixKeyCreationData
+        {
+            Type = Key.Type,
+            Value = Key.Value,
+            CPF = User.CPF,
+            Number = Account.Number,
+            Agency = Account.Agency
+        };
+    }
 }
 
 public partial record class KeyDTO : IValidatableObject

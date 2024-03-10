@@ -29,7 +29,7 @@ namespace MyWallet.Models
         public ICollection<PixKeys>? PixKeys { get; }
 
         [DefaultValue("Now()")]
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.Now.ToUniversalTime();
         public DateTime? UpdatedAt { get; set; }
     }
 }

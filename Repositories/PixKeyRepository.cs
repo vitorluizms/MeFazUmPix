@@ -13,4 +13,29 @@ public class KeyRepository
     {
         _context = context;
     }
+
+    public async Task<List<PixKeys>> GetPixKeyByUserId(int id)
+    {
+        return await _context.PixKeys.Where(pk => pk.Account != null && pk.Account.UserId.Equals(id)).ToListAsync();
+    }
+
+    public async Task<List<PixKeys>> AccountWithFiveOrMorePixKeys(int number, int agency)
+    {
+        return await _context.PixKeys.Where(pk => pk.Account != null && pk.Account.Number.Equals(number) && pk.Account.Agency.Equals(agency)).ToListAsync();
+    }
+
+    public async Task<PixKeys> CreateKey(string type, string value, int accountId, int paymentProviderId)
+    {
+        PixKeys pixKey = new()
+        {
+            Type = type,
+            Value = value,
+            AccountId = accountId,
+            PaymentProviderId = paymentProviderId
+        };
+
+        _context.PixKeys.Add(pixKey);
+        await _context.SaveChangesAsync();
+        return pixKey;
+    }
 }

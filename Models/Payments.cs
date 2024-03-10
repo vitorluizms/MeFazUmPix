@@ -29,7 +29,7 @@ namespace MyWallet.Models
         [EnumDataType(typeof(PaymentStatus))]
         public string Status { get; set; } = "Pendent";
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.Now.ToUniversalTime();
         public DateTime? UpdatedAt { get; set; }
         public PixKeys? PixKeys { get; set; }
         public PaymentProvider? PaymentProvider { get; set; }

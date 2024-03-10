@@ -35,7 +35,7 @@ namespace MyWallet.Models
         public Account? Account { get; set; }
         public ICollection<Payments>? Payments { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; } = DateTime.Now.ToUniversalTime();
         public DateTime? UpdatedAt { get; set; }
     }
 }
