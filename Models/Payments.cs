@@ -18,12 +18,6 @@ namespace MyWallet.Models
         public int Id { get; set; }
 
         [Required]
-        public int UserId { get; set; }
-
-        [Required]
-        public int AccountId { get; set; }
-
-        [Required]
         public int PixKeyId { get; set; }
 
         [Required]
@@ -35,10 +29,8 @@ namespace MyWallet.Models
         [EnumDataType(typeof(PaymentStatus))]
         public string Status { get; set; } = "Pendent";
 
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; }
-        public User? User { get; set; }
-        public Account? Account { get; set; }
         public PixKeys? PixKeys { get; set; }
         public PaymentProvider? PaymentProvider { get; set; }
     }

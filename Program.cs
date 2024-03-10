@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MyWallet.Data;
 using MyWallet.Middlewares;
+using MyWallet.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -23,6 +24,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddScoped<HealthService, HealthService>();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -37,6 +40,8 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.UseMiddleware<AuthorizationMiddleware>();
 
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 

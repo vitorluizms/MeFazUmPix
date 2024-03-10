@@ -1,16 +1,17 @@
 using Microsoft.AspNetCore.Mvc;
+using MyWallet.DTOs;
 
 namespace MyWallet.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("/keys")]
 
 public class KeysController : ControllerBase
 {
 
-    [HttpGet]
-    public IActionResult CreateKey()
+    [HttpPost]
+    public IActionResult CreateKey(CreateKeyDTO dto)
     {
-        return Ok("Get keys");
+        return CreatedAtAction(null, null, dto.ToEntity());
     }
 }

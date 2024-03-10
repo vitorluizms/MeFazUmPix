@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MyWallet.Data;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MyWallet.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240309230453_AddUserNameColumn")]
+    partial class AddUserNameColumn
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,9 +54,6 @@ namespace MyWallet.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("PaymentProviderId");
-
-                    b.HasIndex("Number", "Agency")
-                        .IsUnique();
 
                     b.HasIndex("UserId", "PaymentProviderId")
                         .IsUnique();
@@ -97,6 +97,9 @@ namespace MyWallet.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("AccountId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("Amount")
                         .HasColumnType("integer");
 
@@ -116,10 +119,12 @@ namespace MyWallet.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int?>("UserId")
+                    b.Property<int>("UserId")
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
 
                     b.HasIndex("PaymentProviderId");
 
@@ -154,6 +159,9 @@ namespace MyWallet.Migrations
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -164,6 +172,8 @@ namespace MyWallet.Migrations
                     b.HasIndex("AccountId");
 
                     b.HasIndex("PaymentProviderId");
+
+                    b.HasIndex("UserId");
 
                     b.HasIndex("Value")
                         .IsUnique();
@@ -226,6 +236,13 @@ namespace MyWallet.Migrations
 
             modelBuilder.Entity("MyWallet.Models.Payments", b =>
                 {
+                    b.HasOne("MyWallet.Models.Account", "Account")
+                        .WithMany("Payments")
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Payment_Account");
+
                     b.HasOne("MyWallet.Models.PaymentProvider", "PaymentProvider")
                         .WithMany("Payments")
                         .HasForeignKey("PaymentProviderId")
@@ -240,13 +257,20 @@ namespace MyWallet.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_Payment_PixKey");
 
-                    b.HasOne("MyWallet.Models.User", null)
+                    b.HasOne("MyWallet.Models.User", "User")
                         .WithMany("Payments")
-                        .HasForeignKey("UserId");
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_Payment_User");
+
+                    b.Navigation("Account");
 
                     b.Navigation("PaymentProvider");
 
                     b.Navigation("PixKeys");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MyWallet.Models.PixKeys", b =>
@@ -258,19 +282,28 @@ namespace MyWallet.Migrations
                         .IsRequired()
                         .HasConstraintName("FK_PixKeys_Account");
 
-                    b.HasOne("MyWallet.Models.PaymentProvider", "PaymentProvider")
+                    b.HasOne("MyWallet.Models.PaymentProvider", null)
                         .WithMany("PixKeys")
                         .HasForeignKey("PaymentProviderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("MyWallet.Models.User", "User")
+                        .WithMany("PixKeys")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired()
+                        .HasConstraintName("FK_PixKeys_User");
+
                     b.Navigation("Account");
 
-                    b.Navigation("PaymentProvider");
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("MyWallet.Models.Account", b =>
                 {
+                    b.Navigation("Payments");
+
                     b.Navigation("PixKeys");
                 });
 
@@ -293,6 +326,8 @@ namespace MyWallet.Migrations
                     b.Navigation("Accounts");
 
                     b.Navigation("Payments");
+
+                    b.Navigation("PixKeys");
                 });
 #pragma warning restore 612, 618
         }

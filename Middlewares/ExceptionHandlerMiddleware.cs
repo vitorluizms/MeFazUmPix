@@ -3,9 +3,10 @@ using MyWallet.Exceptions;
 
 namespace MyWallet.Middlewares;
 
-public class ExceptionHandlerMiddleware(RequestDelegate next)
+public class ExceptionHandlerMiddleware(RequestDelegate next, ILogger<ExceptionHandlerMiddleware> logger)
 {
     private readonly RequestDelegate _next = next;
+    private readonly ILogger<ExceptionHandlerMiddleware> _logger = logger;
 
 
     public async Task InvokeAsync(HttpContext context)
@@ -16,12 +17,15 @@ public class ExceptionHandlerMiddleware(RequestDelegate next)
         }
         catch (Exception ex)
         {
-            HandleException(context, ex);
+            await HandleException(context, ex);
         }
     }
 
-    private static void HandleException(HttpContext context, Exception exception)
+    private async Task HandleException(HttpContext context, Exception exception)
     {
+        _logger.LogError(exception, "An unexpected error occurred.");
+
+
         ExceptionResponse response = exception switch
         {
             NotFoundError notFoundError => new ExceptionResponse(HttpStatusCode.NotFound, notFoundError.Message),
@@ -30,7 +34,7 @@ public class ExceptionHandlerMiddleware(RequestDelegate next)
 
         context.Response.ContentType = "application/json";
         context.Response.StatusCode = (int)response.StatusCode;
-        context.Response.WriteAsJsonAsync(response);
+        await context.Response.WriteAsJsonAsync(response);
     }
 }
 

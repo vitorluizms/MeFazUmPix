@@ -26,18 +26,14 @@ public class AppDbContext(DbContextOptions<AppDbContext> Options) : DbContext(Op
             .IsRequired()
             .HasConstraintName("FK_PixKeys_Account");
 
-        // Validation: A bank account (number, agency) only exists in one bank (payment provider):
+        // Validation: A bank account only exists in one bank (payment provider):
         modelBuilder.Entity<Account>()
-             .HasIndex(a => new { a.UserId, a.PaymentProviderId })
-             .IsUnique();
+            .HasIndex(a => new { a.UserId, a.PaymentProviderId })
+            .IsUnique();
 
-        // Validation - Relationship between PixKeys and User
-        modelBuilder.Entity<PixKeys>()
-            .HasOne(pk => pk.User)
-            .WithMany(u => u.PixKeys)
-            .HasForeignKey(pk => pk.UserId)
-            .IsRequired()
-            .HasConstraintName("FK_PixKeys_User");
+        modelBuilder.Entity<Account>()
+            .HasIndex(a => new { a.Number, a.Agency })
+            .IsUnique();
 
         // Validation: Relationship between Account and User
         modelBuilder.Entity<Account>()
@@ -54,22 +50,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> Options) : DbContext(Op
             .HasForeignKey(a => a.PaymentProviderId)
             .IsRequired()
             .HasConstraintName("FK_Account_PaymentProvider");
-
-        // Validation: Relationship between Payment and User
-        modelBuilder.Entity<Payments>()
-            .HasOne(p => p.User)
-            .WithMany(u => u.Payments)
-            .HasForeignKey(p => p.UserId)
-            .IsRequired()
-            .HasConstraintName("FK_Payment_User");
-
-        // Validation: Relationship between Payment and Account
-        modelBuilder.Entity<Payments>()
-            .HasOne(p => p.Account)
-            .WithMany(a => a.Payments)
-            .HasForeignKey(p => p.AccountId)
-            .IsRequired()
-            .HasConstraintName("FK_Payment_Account");
 
         // Validation: Relationship between Payment and PixKey
         modelBuilder.Entity<Payments>()

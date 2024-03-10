@@ -25,23 +25,17 @@ namespace MyWallet.Models
         [Required]
         [EnumDataType(typeof(PixKeyType))]
         public required string Type { get; set; } // "CPF", "Email", "Phone", "Random"u
-
-        [Required]
-        public int UserId { get; set; }
-
         [Required]
         public int AccountId { get; set; }
 
         [Required]
         public int PaymentProviderId { get; set; }
 
-
-        public User? User { get; set; }
-
+        public PaymentProvider? PaymentProvider { get; set; }
         public Account? Account { get; set; }
         public ICollection<Payments>? Payments { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; }
     }
 }

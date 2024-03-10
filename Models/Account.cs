@@ -26,9 +26,8 @@ namespace MyWallet.Models
         public PaymentProvider? PaymentProvider { get; set; }
 
         public ICollection<PixKeys>? PixKeys { get; }
-        public ICollection<Payments>? Payments { get; }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; }
     }
 }
