@@ -1,8 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using MyWallet.Data;
+using MyWallet.DTOs;
 using MyWallet.Middlewares;
 using MyWallet.Repositories;
 using MyWallet.Services;
+using Prometheus;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -32,6 +34,7 @@ builder.Services.AddScoped<UserRepository>();
 builder.Services.AddScoped<AccountRepository>();
 builder.Services.AddScoped<AuthorizationMiddleware>();
 builder.Services.AddScoped<PaymentProviderRepository>();
+builder.Services.AddScoped<GetKeyByValueDTO>();
 
 var app = builder.Build();
 
@@ -42,11 +45,16 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.UseMetricServer();
+app.UseHttpMetrics(options => options.AddCustomLabel("host", context => context.Request.Host.Host));
+
 app.UseHttpsRedirection();
 
 app.UseAuthorization();
 
 app.MapControllers();
+
+app.MapMetrics();
 
 app.UseMiddleware<ExceptionHandlerMiddleware>();
 

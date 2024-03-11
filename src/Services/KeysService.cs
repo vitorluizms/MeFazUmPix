@@ -1,3 +1,4 @@
+using MyWallet.DTOs;
 using MyWallet.Entities;
 using MyWallet.Exceptions;
 using MyWallet.Models;
@@ -70,6 +71,12 @@ public class KeysService
 
         List<PixKeys> keysByAccount = await _keyRepository.AccountWithFiveOrMorePixKeys(number, agency);
         if (keysByAccount.Count >= 5) throw new ConflictError("This account have 5 keys already");
+    }
+
+    public async Task<PixKeys> GetKeyByValue(string type, string value)
+    {
+        PixKeys? key = await _keyRepository.GetPixKeyByValue(type, value) ?? throw new NotFoundError("Key not found");
+        return key;
     }
 
 }

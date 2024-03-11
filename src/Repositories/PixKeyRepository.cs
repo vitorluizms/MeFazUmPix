@@ -38,4 +38,12 @@ public class KeyRepository
         await _context.SaveChangesAsync();
         return pixKey;
     }
+
+    public async Task<PixKeys?> GetPixKeyByValue(string type, string value)
+    {
+        return await _context.PixKeys
+            .Include(pk => pk.Account)
+                .ThenInclude(account => account != null ? account.User : null)
+            .FirstOrDefaultAsync(pk => pk.Type.Equals(type) && pk.Value.Equals(value));
+    }
 }
