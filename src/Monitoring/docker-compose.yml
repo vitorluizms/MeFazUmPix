@@ -1,11 +1,27 @@
 version: '3.8'
 services:
+  postgres:
+    container_name: postgres
+    image: postgres
+    ports:
+      - 5434:5432
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
   node-exporter:
     image: quay.io/prometheus/node-exporter:latest
     command:
       - '--path.rootfs=/host'
     pid: host
-    network_mode: host
     ports: 
       - 9100:9100
     restart: unless-stopped
@@ -15,7 +31,6 @@ services:
   prometheus:
     container_name: prometheus
     image: prom/prometheus:latest
-    network_mode: host
     ports:
       - 9090:9090
     volumes:
@@ -24,22 +39,33 @@ services:
   grafana:
     container_name: grafana
     image: grafana/grafana:latest
-    network_mode: host
     ports: 
       - 3000:3000
     volumes:
       - grafana:/var/lib/grafana
 
+
   postgres-exporter: 
-    image: quay.io/prometheuscommunity/postgres-exporter:latest
     container_name: postgres-exporter
-    network_mode: host
+    image: quay.io/prometheuscommunity/postgres-exporter:latest
     ports: 
       - 9187:9187
     environment:
-      - DATA_SOURCE_URI=192.168.1.7:5432/dev?sslmode=disable
+      - DATA_SOURCE_URI=postgres:5432/postgres?sslmode=disable
       - DATA_SOURCE_USER=postgres
       - DATA_SOURCE_PASS=postgres
 
+  faz-o-pix:
+    container_name: faz-o-pix
+    image: pix-2 
+    ports:
+      - "5089:5089"  
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    restart: always
+    command: sh -c "docker pull vitorluizms/faz-o-pix:1.0 && dotnet MyWallet.dll"
+
+
 volumes:
   grafana:
+  postgres:
