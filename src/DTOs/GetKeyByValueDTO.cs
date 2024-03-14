@@ -40,7 +40,9 @@ public class GetKeyByValueDTO
             Account = new Account
             {
                 Number = key.Account?.Number,
-                Agency = key.Account?.Agency
+                Agency = key.Account?.Agency,
+                BankName = key.PaymentProvider?.Name,
+                BankId = key.PaymentProvider?.Id
             }
         };
     }
@@ -67,6 +69,8 @@ public class GetKeyByValueDTO
     {
         public required int? Number { get; set; }
         public required int? Agency { get; set; }
+        public required string? BankName { get; set; }
+        public required int? BankId { get; set; }
     }
 
 }

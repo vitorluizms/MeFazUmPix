@@ -24,7 +24,7 @@ namespace MyWallet.Models
 
         [Required]
         [EnumDataType(typeof(PixKeyType))]
-        public required string Type { get; set; } // "CPF", "Email", "Phone", "Random"u
+        public required string Type { get; set; } // "CPF", "Email", "Phone", "Random"
         [Required]
         public int AccountId { get; set; }
 

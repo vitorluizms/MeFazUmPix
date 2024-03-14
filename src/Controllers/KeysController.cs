@@ -70,7 +70,6 @@ public class KeysController : ControllerBase
         int id = await _authorizationMiddleware.ValidatePSPToken(token);
 
         PixKeys? key = await _keysService.GetKeyByValue(type, value);
-        Console.WriteLine(key.Account?.Agency);
         var responseBody = _getKeyByValueDTO.ConvertDataToGetKeyByValue(key);
 
         return Ok(responseBody);

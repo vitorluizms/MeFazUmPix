@@ -42,6 +42,7 @@ public class KeyRepository
     public async Task<PixKeys?> GetPixKeyByValue(string type, string value)
     {
         return await _context.PixKeys
+            .Include(Account => Account != null ? Account.PaymentProvider : null)
             .Include(pk => pk.Account)
                 .ThenInclude(account => account != null ? account.User : null)
             .FirstOrDefaultAsync(pk => pk.Type.Equals(type) && pk.Value.Equals(value));

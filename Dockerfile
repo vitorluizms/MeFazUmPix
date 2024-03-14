@@ -9,9 +9,9 @@ WORKDIR /src
 RUN dotnet publish -c release -o /app --no-restore
 
 # final stage/image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+FROM mcr.microsoft.com/dotnet/aspnet:8.0.2
 WORKDIR /app
-EXPOSE 5045
+EXPOSE 5089
 ENV ASPNETCORE_URLS=http://+:5089
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 COPY --from=build /app ./
