@@ -27,8 +27,6 @@ public class KeysService
         Users user = await ValidateUser(dto.CPF);
         List<Account> accounts = await _accountRepository.GetAccountsByUserId(user.Id);
 
-        if (!accounts.Any(a => a.Number == dto.Number && a.Agency == dto.Agency) && accounts.Any(a => a.PaymentProviderId == id)) throw new NotFoundError("User already has an account with this payment provider but number provided doesn't match any account.");
-
         if (!accounts.Any(a => a.Number == dto.Number && a.Agency == dto.Agency))
         {
             Account newAccount = await CreateNewAccount(user.Id, dto.Number, dto.Agency, id);

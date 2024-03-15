@@ -54,10 +54,9 @@ namespace MyWallet.Migrations
 
                     b.HasIndex("PaymentProviderId");
 
-                    b.HasIndex("Number", "Agency")
-                        .IsUnique();
+                    b.HasIndex("UserId");
 
-                    b.HasIndex("UserId", "PaymentProviderId")
+                    b.HasIndex("Number", "Agency")
                         .IsUnique();
 
                     b.ToTable("Accounts");
@@ -164,8 +163,7 @@ namespace MyWallet.Migrations
 
                     b.Property<string>("Value")
                         .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
+                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

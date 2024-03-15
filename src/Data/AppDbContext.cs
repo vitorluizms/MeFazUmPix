@@ -26,11 +26,6 @@ public class AppDbContext(DbContextOptions<AppDbContext> Options) : DbContext(Op
             .IsRequired()
             .HasConstraintName("FK_PixKeys_Account");
 
-        // Validation: A bank account only exists in one bank (payment provider):
-        modelBuilder.Entity<Account>()
-            .HasIndex(a => new { a.UserId, a.PaymentProviderId })
-            .IsUnique();
-
         modelBuilder.Entity<Account>()
             .HasIndex(a => new { a.Number, a.Agency })
             .IsUnique();
