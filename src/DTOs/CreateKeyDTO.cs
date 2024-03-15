@@ -49,13 +49,13 @@ public partial record class KeyDTO : IValidatableObject
 
     public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
     {
-        if (!ValidationPatterns.TryGetValue(Type, out var regexPattern))
+        if (!ValidationPatterns.TryGetValue(Type, out var regexPattern) && Type != "Random")
         {
             yield return new ValidationResult("Invalid Type.", [nameof(Type)]);
             yield break;
         }
 
-        if (!Regex.IsMatch(Value, regexPattern))
+        if (Type != "Random" && regexPattern != null && !Regex.IsMatch(Value, regexPattern))
         {
             yield return new ValidationResult($"Invalid format for {Type}.", [nameof(Value)]);
         }
@@ -65,19 +65,39 @@ public partial record class KeyDTO : IValidatableObject
 
 public record class UserDTO
 {
-    [Required]
-    [StringLength(14)]
-    [RegularExpression(@"^\d{3}\.\d{3}\.\d{3}-\d{2}$", ErrorMessage = "Invalid CPF. Must be in the format 000.000.000-00.")]
+    [Required(ErrorMessage = "CPF is required.")]
+    [StringLength(14, ErrorMessage = "CPF must have 14 characters.")]
+    [RegularExpression(@"^(0\d{2}|[1-9]\d{2})\.(0\d{2}|[1-9]\d{2})\.(0\d{2}|[1-9]\d{2})-(0\d|1\d|2\d|3[0-2])$", ErrorMessage = "Invalid CPF. Must be in the format 000.000.000-00.")]
     public required string CPF { get; set; }
 }
 
-public record class AccountDTO
+
+public partial record class AccountDTO
 {
-    [Required]
-    [RegularExpression(@"^\d{8}$", ErrorMessage = "Field Number of Account must have 8 digits .")]
+    [Required(ErrorMessage = "Number of Account is required.")]
     public required int Number { get; set; }
 
-    [Required]
-    [RegularExpression(@"^\d{4}$", ErrorMessage = "Field Number of Account must have 4 digits .")]
+    [Required(ErrorMessage = "Agency is required.")]
     public required int Agency { get; set; }
+
+    public IEnumerable<ValidationResult> Validate(ValidationContext validationContext)
+    {
+        var numberString = Number.ToString();
+        var agencyString = Agency.ToString();
+
+        if (!MyRegex().IsMatch(numberString))
+        {
+            yield return new ValidationResult("Field Number of Account must have up to 8 digits with optional leading zeros.", new[] { nameof(Number) });
+        }
+
+        if (!MyRegex1().IsMatch(agencyString))
+        {
+            yield return new ValidationResult("Field Agency must have up to 4 digits with optional leading zeros.", new[] { nameof(Agency) });
+        }
+    }
+
+    [GeneratedRegex(@"^0*\d{1,8}$")]
+    private static partial Regex MyRegex();
+    [GeneratedRegex(@"^0*\d{1,4}$")]
+    private static partial Regex MyRegex1();
 }
