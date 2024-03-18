@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using MyWallet.Config;
 using MyWallet.Data;
 using MyWallet.DTOs;
 using MyWallet.Middlewares;
@@ -35,6 +36,9 @@ builder.Services.AddScoped<AccountRepository>();
 builder.Services.AddScoped<AuthorizationMiddleware>();
 builder.Services.AddScoped<PaymentProviderRepository>();
 builder.Services.AddScoped<GetKeyByValueDTO>();
+
+IConfigurationSection queueConfigurationSection = builder.Configuration.GetSection("QueueSettings");
+builder.Services.Configure<QueueConfig>(queueConfigurationSection); 
 
 var app = builder.Build();
 

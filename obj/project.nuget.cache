@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "e7nB5SG8INiHIF/QImg8JovBTTy69vxPR49mqlQFgkrYwhgFbx6azKd5RR6/3C9l8fV+HCuvgcBe2LvaiKq0ow==",
+  "dgSpecHash": "1id2nQGWpuFwxk1bu1ufqUiYWN/9CMk2ng9BjRq9UXCRDyuQL0g89HKgkZWQ0JcXppAFoxP/t9RvqkF7S7WUXQ==",
   "success": true,
   "projectFilePath": "/home/vitor/aceleracao-c#/MyWallet/MyWallet.csproj",
   "expectedPackageFiles": [
@@ -40,6 +40,7 @@
     "/home/vitor/.nuget/packages/prometheus-net/8.2.1/prometheus-net.8.2.1.nupkg.sha512",
     "/home/vitor/.nuget/packages/prometheus-net.aspnetcore/8.2.1/prometheus-net.aspnetcore.8.2.1.nupkg.sha512",
     "/home/vitor/.nuget/packages/prometheus-net.aspnetcore.healthchecks/8.2.1/prometheus-net.aspnetcore.healthchecks.8.2.1.nupkg.sha512",
+    "/home/vitor/.nuget/packages/rabbitmq.client/6.8.1/rabbitmq.client.6.8.1.nupkg.sha512",
     "/home/vitor/.nuget/packages/swashbuckle.aspnetcore/6.4.0/swashbuckle.aspnetcore.6.4.0.nupkg.sha512",
     "/home/vitor/.nuget/packages/swashbuckle.aspnetcore.swagger/6.4.0/swashbuckle.aspnetcore.swagger.6.4.0.nupkg.sha512",
     "/home/vitor/.nuget/packages/swashbuckle.aspnetcore.swaggergen/6.4.0/swashbuckle.aspnetcore.swaggergen.6.4.0.nupkg.sha512",
@@ -53,12 +54,13 @@
     "/home/vitor/.nuget/packages/system.composition.runtime/6.0.0/system.composition.runtime.6.0.0.nupkg.sha512",
     "/home/vitor/.nuget/packages/system.composition.typedparts/6.0.0/system.composition.typedparts.6.0.0.nupkg.sha512",
     "/home/vitor/.nuget/packages/system.io.pipelines/6.0.3/system.io.pipelines.6.0.3.nupkg.sha512",
+    "/home/vitor/.nuget/packages/system.memory/4.5.5/system.memory.4.5.5.nupkg.sha512",
     "/home/vitor/.nuget/packages/system.reflection.metadata/6.0.1/system.reflection.metadata.6.0.1.nupkg.sha512",
     "/home/vitor/.nuget/packages/system.runtime.compilerservices.unsafe/6.0.0/system.runtime.compilerservices.unsafe.6.0.0.nupkg.sha512",
     "/home/vitor/.nuget/packages/system.text.encoding.codepages/6.0.0/system.text.encoding.codepages.6.0.0.nupkg.sha512",
     "/home/vitor/.nuget/packages/system.text.encodings.web/8.0.0/system.text.encodings.web.8.0.0.nupkg.sha512",
     "/home/vitor/.nuget/packages/system.text.json/8.0.0/system.text.json.8.0.0.nupkg.sha512",
-    "/home/vitor/.nuget/packages/system.threading.channels/6.0.0/system.threading.channels.6.0.0.nupkg.sha512"
+    "/home/vitor/.nuget/packages/system.threading.channels/7.0.0/system.threading.channels.7.0.0.nupkg.sha512"
   ],
   "logs": []
 }

@@ -65,7 +65,31 @@ services:
     restart: always
     command: sh -c "docker pull vitorluizms/faz-o-pix:7 && dotnet MyWallet.dll"
 
+  rabbitmq:
+    image: rabbitmq:3.12.12-management
+    ports: 
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    volumes:
+      - rabbitmq-volume:/var/lib/rabbitmq
+
+  consumer:
+    container_name: consumer
+    image: consumermw
+    depends_on:
+      - rabbitmq
+    networks:
+      - mynetwork
+
 
 volumes:
   grafana:
   postgres:
+  rabbitmq-volume:
+
+networks:
+  mynetwork:
+    driver: bridge

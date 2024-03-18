@@ -16,8 +16,8 @@ namespace MyWallet.Models
         [StringLength(100)]
         public string? Name { get; set; }
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now.ToUniversalTime();
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<Account>? Accounts { get; set; }
         public ICollection<Payments>? Payments { get; set; }
