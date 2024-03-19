@@ -10,6 +10,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> Options) : DbContext(Op
     public DbSet<Account> Accounts { get; set; }
     public DbSet<PaymentProvider> PaymentProviders { get; set; }
     public DbSet<PixKeys> PixKeys { get; set; }
+    public DbSet<Payments> Payments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

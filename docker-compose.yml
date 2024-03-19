@@ -1,15 +1,95 @@
-volumes:
-    database-volumes:
-
+version: '3.8'
 services:
-  database: 
+  postgres:
+    container_name: postgres
     image: postgres
-    container_name: postgresql
-    network_mode: host
+    ports:
+      - 5432:5432
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-    ports: 
-      - '5433:5432'
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
     volumes:
-      - 'database-volumes:/var/lib/postgresql/data'
+      - postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  node-exporter:
+    image: quay.io/prometheus/node-exporter:latest
+    command:
+      - '--path.rootfs=/host'
+    pid: host
+    ports: 
+      - 9100:9100
+    restart: unless-stopped
+    volumes:
+      - '/:/host:ro,rslave'
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:latest
+    ports:
+      - 9090:9090
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml:ro
+
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:latest
+    ports: 
+      - 3000:3000
+    volumes:
+      - grafana:/var/lib/grafana
+
+
+  postgres-exporter: 
+    container_name: postgres-exporter
+    image: quay.io/prometheuscommunity/postgres-exporter:latest
+    ports: 
+      - 9187:9187
+    environment:
+      - DATA_SOURCE_URI=postgres:5432/postgres?sslmode=disable
+      - DATA_SOURCE_USER=postgres
+      - DATA_SOURCE_PASS=postgres
+
+  faz-o-pix:
+    container_name: faz-o-pix
+    image: vitorluizms/faz-o-pix:7
+    ports:
+      - "5090:5089"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    restart: always
+    command: sh -c "docker pull vitorluizms/faz-o-pix:7 && dotnet MyWallet.dll"
+
+  rabbitmq:
+    image: rabbitmq:3.12.12-management
+    ports: 
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    volumes:
+      - rabbitmq-volume:/var/lib/rabbitmq
+
+  consumer:
+    container_name: consumer
+    image: consumermw
+    depends_on:
+      - rabbitmq
+    networks:
+      - mynetwork
+
+
+volumes:
+  grafana:
+  postgres:
+  rabbitmq-volume:
+
+networks:
+  mynetwork:
+    driver: bridge

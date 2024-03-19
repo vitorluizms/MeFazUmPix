@@ -36,6 +36,7 @@ builder.Services.AddScoped<AccountRepository>();
 builder.Services.AddScoped<AuthorizationMiddleware>();
 builder.Services.AddScoped<PaymentProviderRepository>();
 builder.Services.AddScoped<GetKeyByValueDTO>();
+builder.Services.AddScoped<PaymentsRepository>();
 
 IConfigurationSection queueConfigurationSection = builder.Configuration.GetSection("QueueSettings");
 builder.Services.Configure<QueueConfig>(queueConfigurationSection); 
