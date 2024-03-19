@@ -6,11 +6,11 @@ namespace MyWallet.Models
 
     public enum PaymentStatus
     {
-        Pendent,
-        Approved,
-        Denied
+        PROCESSING,
+        SUCCESS,
+        FAILED
     }
-    public class Payments
+    public class Payments : BaseEntity
     {
 
         [Key]
@@ -21,17 +21,18 @@ namespace MyWallet.Models
         public int PixKeyId { get; set; }
 
         [Required]
-        public int PaymentProviderId { get; set; }
+        public int PaymentProviderAccountId { get; set; }
 
         [Required]
         public int Amount { get; set; }
+        public string? Description { get; set; }
 
         [EnumDataType(typeof(PaymentStatus))]
-        public string Status { get; set; } = "Pendent";
+        public string Status { get; set; } = "PROCESSING";
 
-        public DateTime CreatedAt { get; set; } = DateTime.Now.ToUniversalTime();
-        public DateTime? UpdatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public new DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
         public PixKeys? PixKeys { get; set; }
-        public PaymentProvider? PaymentProvider { get; set; }
+        public Account? Account { get; set; }
     }
 }

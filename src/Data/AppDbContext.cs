@@ -56,9 +56,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> Options) : DbContext(Op
 
         // Validation: Relationship between Payment and PaymentProvider
         modelBuilder.Entity<Payments>()
-            .HasOne(p => p.PaymentProvider)
-            .WithMany(pp => pp.Payments)
-            .HasForeignKey(p => p.PaymentProviderId)
+            .HasOne(p => p.Account)
+            .WithMany(a => a.Payments)
+            .HasForeignKey(p => p.PaymentProviderAccountId)
             .IsRequired()
             .HasConstraintName("FK_Payment_PaymentProvider");
 
@@ -71,28 +71,33 @@ public class AppDbContext(DbContextOptions<AppDbContext> Options) : DbContext(Op
         modelBuilder.Entity<PixKeys>()
             .HasIndex(pk => pk.Value)
             .IsUnique();
-
-        // Set the default value for the CreatedAt field
-
-        modelBuilder.Entity<Users>()
-            .Property(u => u.CreatedAt)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
-
-        modelBuilder.Entity<Account>()
-            .Property(a => a.CreatedAt)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
-
-        modelBuilder.Entity<PaymentProvider>()
-            .Property(p => p.CreatedAt)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
-
-        modelBuilder.Entity<PixKeys>()
-            .Property(pk => pk.CreatedAt)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
-
-        modelBuilder.Entity<Payments>()
-            .Property(p => p.CreatedAt)
-            .HasDefaultValueSql("CURRENT_TIMESTAMP AT TIME ZONE 'UTC'");
     }
+
+    // Update the UpdatedAt field before saving
+    public override int SaveChanges()
+    {
+        OnBeforeSaving();
+        return base.SaveChanges();
+    }
+
+    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
+    {
+        OnBeforeSaving();
+        return await base.SaveChangesAsync(cancellationToken);
+    }
+
+    private void OnBeforeSaving()
+    {
+        var entries = ChangeTracker.Entries()
+            .Where(e => e.Entity is BaseEntity && (
+                e.State == EntityState.Added
+                || e.State == EntityState.Modified));
+
+        foreach (var entry in entries)
+        {
+            ((BaseEntity)entry.Entity).UpdatedAt = DateTime.Now;
+        }
+    }
+
 
 }

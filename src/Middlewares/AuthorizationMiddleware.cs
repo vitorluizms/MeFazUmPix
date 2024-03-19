@@ -13,13 +13,13 @@ public class AuthorizationMiddleware
         _paymentProviderRepository = paymentProviderRepository;
     }
 
-    public async Task<int> ValidatePSPToken(string token)
+    public async Task<PaymentProvider> ValidatePSPToken(string token)
     {
 
         if (string.IsNullOrEmpty(token)) throw new UnauthorizedError("PSP Token is missing");
 
         PaymentProvider? paymentProvider = await _paymentProviderRepository.GetPaymentProviderByToken(token) ?? throw new UnauthorizedError("Payment Provider not found");
 
-        return paymentProvider.Id;
+        return paymentProvider;
     }
 }

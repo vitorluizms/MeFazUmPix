@@ -41,7 +41,7 @@ public class KeysService
         return key;
     }
 
-    private async Task<Users> ValidateUser(string cpf)
+    public async Task<Users> ValidateUser(string cpf)
     {
         Users? user = await _userRepository.GetUserByCPF(cpf) ?? throw new NotFoundError("User not found");
 

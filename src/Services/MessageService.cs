@@ -25,12 +25,16 @@ public class MessageService(IOptions<QueueConfig> queueConfig)
         );
 
         string json = JsonSerializer.Serialize(message);
+        var body = Encoding.UTF8.GetBytes(json);
 
-        var body = Encoding.UTF8.GetBytes(message);
+
+        IBasicProperties properties = _channel.CreateBasicProperties();
+        properties.Persistent = true;
+
         _channel.BasicPublish(
             exchange: String.Empty,
             routingKey: _queueName,
-            basicProperties: null,
+            basicProperties: properties,
             body: body
         );
     }

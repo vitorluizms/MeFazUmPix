@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyWallet.Models
 {
-    public class Users
+    public class Users : BaseEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -17,7 +17,7 @@ namespace MyWallet.Models
         public string? Name { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
+        public new DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
 
         public ICollection<Account>? Accounts { get; set; }
         public ICollection<Payments>? Payments { get; set; }

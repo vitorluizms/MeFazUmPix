@@ -54,9 +54,9 @@ public class KeysController : ControllerBase
     {
         string? token = Request.Headers.Authorization;
         if (token == null) throw new UnauthorizedError("Payment Provider Token is missing");
-        int id = await _authorizationMiddleware.ValidatePSPToken(token);
+        PaymentProvider paymentProvider = await _authorizationMiddleware.ValidatePSPToken(token);
 
-        await _keysService.CreateKey(dto.ToEntity(), id);
+        await _keysService.CreateKey(dto.ToEntity(), paymentProvider.Id);
         var requestBody = ConvertDtoToRequestBody(dto);
         return CreatedAtAction(null, null, requestBody);
     }
@@ -67,7 +67,7 @@ public class KeysController : ControllerBase
 
         string? token = Request.Headers.Authorization;
         if (token == null) throw new UnauthorizedError("Payment Provider Token is missing");
-        int id = await _authorizationMiddleware.ValidatePSPToken(token);
+        PaymentProvider paymentProvider = await _authorizationMiddleware.ValidatePSPToken(token);
 
         PixKeys? key = await _keysService.GetKeyByValue(type, value);
         var responseBody = _getKeyByValueDTO.ConvertDataToGetKeyByValue(key);

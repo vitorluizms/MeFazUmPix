@@ -106,3 +106,4 @@
 /home/vitor/aceleracao-c#/MyWallet/bin/Debug/net8.0/Prometheus.NetStandard.dll
 /home/vitor/aceleracao-c#/MyWallet/bin/Debug/net8.0/Prometheus.AspNetCore.dll
 /home/vitor/aceleracao-c#/MyWallet/bin/Debug/net8.0/Prometheus.AspNetCore.HealthChecks.dll
+/home/vitor/aceleracao-c#/MyWallet/bin/Debug/net8.0/RabbitMQ.Client.dll

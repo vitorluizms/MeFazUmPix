@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyWallet.Models
 {
-    public class Account
+    public class Account : BaseEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -27,9 +27,8 @@ namespace MyWallet.Models
         public PaymentProvider? PaymentProvider { get; set; }
 
         public ICollection<PixKeys>? PixKeys { get; }
-
-        [DefaultValue("Now()")]
-        public DateTime CreatedAt { get; set; } = DateTime.Now.ToUniversalTime();
-        public DateTime? UpdatedAt { get; set; }
+        public ICollection<Payments>? Payments { get; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public new DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
     }
 }
