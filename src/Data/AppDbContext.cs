@@ -96,7 +96,7 @@ public class AppDbContext(DbContextOptions<AppDbContext> Options) : DbContext(Op
 
         foreach (var entry in entries)
         {
-            ((BaseEntity)entry.Entity).UpdatedAt = DateTime.Now;
+            ((BaseEntity)entry.Entity).UpdatedAt = DateTime.UtcNow;
         }
     }
 

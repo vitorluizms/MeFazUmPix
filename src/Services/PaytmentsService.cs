@@ -34,8 +34,8 @@ public class PaymentsService
 
         ValidateSelfPayment(account, key);
 
-        PaymentIdempotenceKey idempotenceKey = new(dto.Amount, key.Id, account.PaymentProviderId); 
-        ValidateDuplicatedPayment(idempotenceKey);
+        PaymentIdempotenceKey idempotenceKey = new(dto.Amount, key.Id, account.Id); 
+        await ValidateDuplicatedPayment(idempotenceKey);
 
         Payments payment = await _paymentsRepository.CreatePayment(dto.PaymentToEntity(key.Id, account.Id));
         PaymentMessageDTO message = new(payment.Id, dto);
@@ -51,9 +51,10 @@ public class PaymentsService
         if (account.Id == key.AccountId) throw new BadRequestError("Self payment is not allowed");
     }
 
-    private async void ValidateDuplicatedPayment(PaymentIdempotenceKey key)
+    private async Task ValidateDuplicatedPayment(PaymentIdempotenceKey key)
     {
         Payments? payments = await _paymentsRepository.GetPaymentByIdempotenceKey(key, MIN_PAYMENT_INTERVAL);
+        Console.WriteLine($"Payments: {payments?.Id}");
 
         if (payments != null) throw new BadRequestError("Duplicated payment");
     }
