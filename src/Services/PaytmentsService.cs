@@ -20,19 +20,21 @@ public class PaymentsService
 
     readonly int MIN_PAYMENT_INTERVAL = 30;
 
-    public async Task CreatePayment(PaymentsCreationData dto, PaymentProvider paymentProvider)
+    public async Task CreatePayment(CreatePaymentDTO dto, PaymentProvider paymentProvider)
     {
-        Users user = await _keysService.ValidateUser(dto.OriginUserCPF);
-        Account account = await _accountRepository.GetAccountByNumberAndAgency(dto.OriginAccountNumber, dto.OriginAccountAgency) ?? throw new NotFoundError ("Account not found");
+        Users user = await _keysService.ValidateUser(dto.ToEntity().OriginUserCPF);
+        Account account = await _accountRepository.GetAccountByNumberAndAgency(dto.ToEntity().OriginAccountNumber, dto.ToEntity().OriginAccountAgency) ?? throw new NotFoundError ("Account not found");
 
         if (account.UserId != user.Id) throw new UnauthorizedError("User is not the owner of the origin account");
 
-        PixKeys key = await _keysService.GetKeyByValue(dto.DestinyKeyValue, dto.DestinyKeyType);    
+        PixKeys key = await _keysService.GetKeyByValue(dto.ToEntity().DestinyKeyValue, dto.ToEntity().DestinyKeyType);    
 
         ValidateSelfPayment(account, key);
 
         PaymentIdempotenceKey idempotenceKey = new(dto.Amount, key.Id, account.PaymentProviderId); 
         ValidateDuplicatedPayment(idempotenceKey);
+
+        Payments payment = await _paymentsRepository.CreatePayment(dto.PaymentToEntity(key.Id, account.Id));
 
     }
 

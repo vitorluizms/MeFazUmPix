@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using MyWallet.Models;
 
 namespace MyWallet.DTOs
 {
@@ -22,7 +23,17 @@ namespace MyWallet.DTOs
                 Description = Description ?? string.Empty
             };
         }
-
+        
+        public Payments PaymentToEntity(int PixKeyId, int PaymentProviderId)
+        {
+            return new Payments
+            {
+                Amount = Amount,
+                Description = Description ?? string.Empty,
+                PixKeyId = PixKeyId,
+                PaymentProviderAccountId = PaymentProviderId,
+            };
+        }
     }
 
     public class OriginDTO
