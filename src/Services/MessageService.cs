@@ -19,7 +19,8 @@ public class MessageService(IOptions<QueueConfig> queueConfig)
         IConnection _connection = factory.CreateConnection();
         IModel _channel = _connection.CreateModel();
 
-        _channel.QueueDeclare(queue: _queueName,
+        _channel.QueueDeclare(
+            queue: _queueName,
             durable: false,
             exclusive: false,
             autoDelete: false,

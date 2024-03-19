@@ -22,6 +22,7 @@ public class PaymentsController : ControllerBase
         _paymentsService = paymentsService;
     }
 
+    [HttpPost]
     public async Task<IActionResult> CreatePaymentDTO(CreatePaymentDTO dto)
     {
         string? token = Request.Headers.Authorization;

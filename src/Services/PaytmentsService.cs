@@ -29,7 +29,7 @@ public class PaymentsService
 
         if (account.UserId != user.Id) throw new UnauthorizedError("User is not the owner of the origin account");
 
-        PixKeys key = await _keysService.GetKeyByValue(dto.ToEntity().DestinyKeyValue, dto.ToEntity().DestinyKeyType);    
+        PixKeys key = await _keysService.GetKeyByValue(dto.ToEntity().DestinyKeyType, dto.ToEntity().DestinyKeyValue);    
 
         ValidateSelfPayment(account, key);
 
@@ -46,7 +46,7 @@ public class PaymentsService
 
     private static void ValidateSelfPayment(Account account, PixKeys key)
     {
-        if (account.Id == key.AccountId) throw new BadRequestError("Self payment");
+        if (account.Id == key.AccountId) throw new BadRequestError("Self payment is not allowed");
     }
 
     private async void ValidateDuplicatedPayment(PaymentIdempotenceKey key)

@@ -79,10 +79,10 @@ services:
   consumer:
     container_name: consumer
     image: consumermw
+    ports: 
+      - 5091:5091
     depends_on:
       - rabbitmq
-    networks:
-      - mynetwork
 
 
 volumes:
