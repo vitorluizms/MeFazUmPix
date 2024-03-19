@@ -15,4 +15,4 @@ EXPOSE 5089
 ENV ASPNETCORE_URLS=http://+:5089
 ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
 COPY --from=build /app ./
-ENTRYPOINT ["dotnet", "MyWallet.dll"] #troque APIx pelo nome do seu app
+ENTRYPOINT ["dotnet", "MyWallet.dll"]

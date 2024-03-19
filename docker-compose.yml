@@ -76,6 +76,16 @@ services:
     volumes:
       - rabbitmq-volume:/var/lib/rabbitmq
 
+  psp-api:
+    container_name: psp-mock
+    image: vitorluizms/psp-mock:latest
+    ports:
+      - "5092:5092"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+    restart: always
+    command: sh -c "docker pull vitorluizms/psp-mock:latest && dotnet psp-mock.dll"
+
   consumer:
     container_name: consumer
     image: consumermw

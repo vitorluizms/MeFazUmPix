@@ -34,4 +34,11 @@ public class PaymentsController : ControllerBase
 
         return CreatedAtAction(null, null, paymentId);
     }
+
+    [HttpPatch("{id}/{status}")]
+    public async Task<IActionResult> UpdatePaymentStatus(int id, string status)
+    {
+        await _paymentsService.UpdatePaymentStatus(id, status);
+        return Ok();
+    }
 }

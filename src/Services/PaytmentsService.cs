@@ -58,4 +58,12 @@ public class PaymentsService
 
         if (payments != null) throw new BadRequestError("Duplicated payment");
     }
+
+    public async Task UpdatePaymentStatus(int id, string status)
+    {
+        Payments payment = await _paymentsRepository.GetPaymentById(id) ?? throw new NotFoundError("Payment not found");
+        payment.Status = status;
+        
+        await _paymentsRepository.UpdatePayment(payment);
+    }
 }   

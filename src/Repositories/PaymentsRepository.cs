@@ -31,5 +31,16 @@ namespace MyWallet.Repositories
 
             return entry.Entity;
         }
+
+        public async Task<Payments?> GetPaymentById(int id)
+        {
+            return await _context.Payments.FirstOrDefaultAsync(p => p.Id == id);
+        }
+
+        public async Task UpdatePayment(Payments payment)
+        {
+            _context.Payments.Update(payment);
+            await _context.SaveChangesAsync();
+        }
     }
 }
