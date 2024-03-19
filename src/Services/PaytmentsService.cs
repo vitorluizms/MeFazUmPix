@@ -10,17 +10,19 @@ public class PaymentsService
     private readonly KeysService _keysService;
     private readonly AccountRepository _accountRepository;
     private readonly PaymentsRepository _paymentsRepository;
+    private readonly MessageService _messageService;
 
-    public PaymentsService(KeysService keysService, AccountRepository accountRepository, PaymentsRepository paymentsRepository)
+    public PaymentsService(KeysService keysService, AccountRepository accountRepository, PaymentsRepository paymentsRepository, MessageService messageService)
     {
         _keysService = keysService;
         _accountRepository = accountRepository;
         _paymentsRepository = paymentsRepository;
+        _messageService = messageService;
     }
 
     readonly int MIN_PAYMENT_INTERVAL = 30;
 
-    public async Task CreatePayment(CreatePaymentDTO dto, PaymentProvider paymentProvider)
+    public async Task<int> CreatePayment(CreatePaymentDTO dto, PaymentProvider paymentProvider)
     {
         Users user = await _keysService.ValidateUser(dto.ToEntity().OriginUserCPF);
         Account account = await _accountRepository.GetAccountByNumberAndAgency(dto.ToEntity().OriginAccountNumber, dto.ToEntity().OriginAccountAgency) ?? throw new NotFoundError ("Account not found");
@@ -35,6 +37,10 @@ public class PaymentsService
         ValidateDuplicatedPayment(idempotenceKey);
 
         Payments payment = await _paymentsRepository.CreatePayment(dto.PaymentToEntity(key.Id, account.Id));
+
+        _messageService.SendMessage(payment);
+
+        return payment.Id;
 
     }
 

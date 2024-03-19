@@ -14,10 +14,12 @@ namespace MyWallet.Controllers;
 public class PaymentsController : ControllerBase
 {
     private readonly AuthorizationMiddleware _authorizationMiddleware;
+    private readonly PaymentsService _paymentsService;
 
-    public PaymentsController(AuthorizationMiddleware authorizationMiddleware)
+    public PaymentsController(AuthorizationMiddleware authorizationMiddleware, PaymentsService paymentsService)
     {
         _authorizationMiddleware = authorizationMiddleware;
+        _paymentsService = paymentsService;
     }
 
     public async Task<IActionResult> CreatePaymentDTO(CreatePaymentDTO dto)
@@ -26,6 +28,9 @@ public class PaymentsController : ControllerBase
         if (token == null) throw new UnauthorizedError("Payment Provider Token is missing");
         PaymentProvider paymentProvider = await _authorizationMiddleware.ValidatePSPToken(token);
 
-        return CreatedAtAction(null, null, 'a');
+        int paymentId = await _paymentsService.CreatePayment(dto, paymentProvider);
+
+
+        return CreatedAtAction(null, null, paymentId);
     }
 }
