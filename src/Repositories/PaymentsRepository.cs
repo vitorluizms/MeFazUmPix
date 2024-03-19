@@ -16,10 +16,10 @@ namespace MyWallet.Repositories
 
         public async Task<Payments?> GetPaymentByIdempotenceKey(PaymentIdempotenceKey key, int minutes)
         {
-            return await _context.Payments.Where(p => 
-                p.PixKeyId == key.PixKeyId && 
-                p.PaymentProviderAccountId == key.PaymentProviderAccountId && 
-                p.Amount == key.Amount && 
+            return await _context.Payments.Where(p =>
+                p.PixKeyId == key.PixKeyId &&
+                p.PaymentProviderAccountId == key.PaymentProviderAccountId &&
+                p.Amount == key.Amount &&
                 p.CreatedAt >= DateTime.UtcNow.AddMinutes(-minutes)
             ).FirstOrDefaultAsync();
         }
@@ -28,7 +28,7 @@ namespace MyWallet.Repositories
         {
             var entry = _context.Payments.Add(payment);
             await _context.SaveChangesAsync();
-            
+
             return entry.Entity;
         }
     }

@@ -2,6 +2,7 @@ using System.Text;
 using System.Text.Json;
 using Microsoft.Extensions.Options;
 using MyWallet.Config;
+using MyWallet.Dtos;
 using MyWallet.DTOs;
 using MyWallet.Models;
 using RabbitMQ.Client;
@@ -13,7 +14,7 @@ public class MessageService(IOptions<QueueConfig> queueConfig)
     private readonly string _password = queueConfig.Value.Password;
     private readonly string _queueName = queueConfig.Value.QueueName;
 
-    public void SendMessage(Payments payment)
+    public void SendMessage(PaymentMessageDTO payment)
     {
         ConnectionFactory factory = new() { HostName = _hostName, UserName = _userName, Password = _password };
         IConnection _connection = factory.CreateConnection();
@@ -21,7 +22,7 @@ public class MessageService(IOptions<QueueConfig> queueConfig)
 
         _channel.QueueDeclare(
             queue: _queueName,
-            durable: false,
+            durable: true,
             exclusive: false,
             autoDelete: false,
             arguments: null

@@ -1,3 +1,4 @@
+using MyWallet.Dtos;
 using MyWallet.DTOs;
 using MyWallet.Exceptions;
 using MyWallet.Models;
@@ -37,8 +38,9 @@ public class PaymentsService
         ValidateDuplicatedPayment(idempotenceKey);
 
         Payments payment = await _paymentsRepository.CreatePayment(dto.PaymentToEntity(key.Id, account.Id));
+        PaymentMessageDTO message = new(payment.Id, dto);
 
-        _messageService.SendMessage(payment);
+        _messageService.SendMessage(message);
 
         return payment.Id;
 
