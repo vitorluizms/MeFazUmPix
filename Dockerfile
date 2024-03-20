@@ -1,18 +1,14 @@
 # https://hub.docker.com/_/microsoft-dotnet
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
-WORKDIR /src
+FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build-env
+WORKDIR /app
 
 # copy everything else and build app
-COPY . .
+COPY *.csproj ./
 RUN dotnet restore
-WORKDIR /src
-RUN dotnet publish -c release -o /app --no-restore
+COPY . ./
+RUN dotnet publish -c Release -o dist
 
 # final stage/image
-FROM mcr.microsoft.com/dotnet/aspnet:8.0.2
-WORKDIR /app
-EXPOSE 5089
-ENV ASPNETCORE_URLS=http://+:5089
-ENV DOTNET_SYSTEM_GLOBALIZATION_INVARIANT=false
-COPY --from=build /app ./
+FROM mcr.microsoft.com/dotnet/sdk:8.0
+COPY --from=build-env /app/dist .
 ENTRYPOINT ["dotnet", "MyWallet.dll"]

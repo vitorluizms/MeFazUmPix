@@ -4,7 +4,7 @@ services:
     container_name: postgres
     image: postgres
     ports:
-      - 5432:5432
+      - 5433:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -57,13 +57,31 @@ services:
 
   faz-o-pix:
     container_name: faz-o-pix
-    image: vitorluizms/faz-o-pix:7
+    image: mywallet
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "5090:5089"
+      - "8080:8080"
+    depends_on:
+      - postgres
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    restart: always
-    command: sh -c "docker pull vitorluizms/faz-o-pix:7 && dotnet MyWallet.dll"
+      - DATABASE_HOST=postgres
+      - DATABASE_PORT=5432
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=postgres
+      - DATABASE_NAME=postgres
+      - RABBITMQ_HOSTNAME=rabbitmq
+      - RABBITMQ_USERNAME=admin
+      - RABBITMQ_PASSWORD=admin
+      - RABBITMQ_QUEUENAME=payments
+  
+  migrate:
+    container_name: faz-o-pix-migrate
+    image: mywallet-migrate
+    build:
+      context: .
+      dockerfile: Dockerfile.migrations
 
   rabbitmq:
     image: rabbitmq:3.12.12-management
@@ -78,28 +96,15 @@ services:
 
   psp-api:
     container_name: psp-mock
-    image: vitorluizms/psp-mock:latest
+    image: vitorluizms/psp-mock:2
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "5092:5092"
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-    restart: always
-    command: sh -c "docker pull vitorluizms/psp-mock:latest && dotnet psp-mock.dll"
-
-  consumer:
-    container_name: consumer
-    image: consumermw
-    ports: 
-      - 5091:5091
-    depends_on:
-      - rabbitmq
+      - "3001:3001"
 
 
 volumes:
   grafana:
   postgres:
   rabbitmq-volume:
-
-networks:
-  mynetwork:
-    driver: bridge
