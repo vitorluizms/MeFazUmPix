@@ -15,7 +15,6 @@ const data = new SharedArray("users",() => {
 export default () => {
     const validPSPToken = "VPZxeLCk9vxZ5bOqtzJduCJARPLH1ruyrI89GY0RCdJ6cHvzJ4FlAHsSG85Wmy9i"
     const user = data[Math.floor(Math.random() * data.length)]
-    console.log(data.length)
 
     const keyData = {
         key: {
@@ -34,8 +33,6 @@ export default () => {
 
     const headers = {"Content-Type": "application/json", "Authorization": `${validPSPToken}`}
     const response = http.post("http://localhost:5090/keys", body, {headers: headers})
-    console.log(response)
-    // sleep(1)
 };
 
 function generateRandomNumberString(digits) {

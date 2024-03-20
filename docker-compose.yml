@@ -4,7 +4,7 @@ services:
     container_name: postgres
     image: postgres
     ports:
-      - 5433:5432
+      - 5432:5432
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
@@ -17,7 +17,19 @@ services:
       timeout: 5s
       retries: 5
 
+  rabbitmq:
+    image: rabbitmq:3.12.12-management
+    ports: 
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=admin
+      - RABBITMQ_DEFAULT_PASS=admin
+    volumes:
+      - rabbitmq-volume:/var/lib/rabbitmq
+
   node-exporter:
+    container_name: node-exporter
     image: quay.io/prometheus/node-exporter:latest
     command:
       - '--path.rootfs=/host'
@@ -44,7 +56,6 @@ services:
     volumes:
       - grafana:/var/lib/grafana
 
-
   postgres-exporter: 
     container_name: postgres-exporter
     image: quay.io/prometheuscommunity/postgres-exporter:latest
@@ -57,52 +68,17 @@ services:
 
   faz-o-pix:
     container_name: faz-o-pix
-    image: mywallet
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "8080:8080"
+    image: faz-o-pix-api
     depends_on:
       - postgres
+    ports:
+      - "8080:8080"
     environment:
-      - DATABASE_HOST=postgres
-      - DATABASE_PORT=5432
-      - DATABASE_USER=postgres
-      - DATABASE_PASSWORD=postgres
-      - DATABASE_NAME=postgres
-      - RABBITMQ_HOSTNAME=rabbitmq
-      - RABBITMQ_USERNAME=admin
-      - RABBITMQ_PASSWORD=admin
-      - RABBITMQ_QUEUENAME=payments
+      - ASPNETCORE_ENVIRONMENT=Development
   
   migrate:
     container_name: faz-o-pix-migrate
-    image: mywallet-migrate
-    build:
-      context: .
-      dockerfile: Dockerfile.migrations
-
-  rabbitmq:
-    image: rabbitmq:3.12.12-management
-    ports: 
-      - 5672:5672
-      - 15672:15672
-    environment:
-      - RABBITMQ_DEFAULT_USER=admin
-      - RABBITMQ_DEFAULT_PASS=admin
-    volumes:
-      - rabbitmq-volume:/var/lib/rabbitmq
-
-  psp-api:
-    container_name: psp-mock
-    image: vitorluizms/psp-mock:2
-    build:
-      context: .
-      dockerfile: Dockerfile
-    ports:
-      - "3001:3001"
-
+    image: faz-o-pix-migrations
 
 volumes:
   grafana:
