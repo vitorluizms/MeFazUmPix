@@ -68,7 +68,7 @@ services:
 
   faz-o-pix:
     container_name: faz-o-pix
-    image: faz-o-pix-api
+    image: vitorluizms/faz-o-pix:latest
     depends_on:
       - postgres
     ports:
@@ -79,7 +79,7 @@ services:
   
   migrate:
     container_name: faz-o-pix-migrate
-    image: faz-o-pix-migrations
+    image: vitorluizms/faz-o-pix-migrations:latest
 
 volumes:
   grafana:
