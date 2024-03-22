@@ -72,6 +72,11 @@ public class AppDbContext(DbContextOptions<AppDbContext> Options) : DbContext(Op
         modelBuilder.Entity<PixKeys>()
             .HasIndex(pk => pk.Value)
             .IsUnique();
+
+        // Create Index for Number and Agency account Unique
+        modelBuilder.Entity<Account>()
+            .HasIndex(a => new { a.Number, a.Agency })
+            .IsUnique();
     }
 
     // Update the UpdatedAt field before saving
