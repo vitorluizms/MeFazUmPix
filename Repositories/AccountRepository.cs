@@ -13,6 +13,11 @@ namespace MyWallet.Repositories
             return await _context.Accounts.Where(a => a.UserId.Equals(id)).ToListAsync();
         }
 
+        public async Task<Account?> GetAccountByNumber(int number)
+        {
+            return await _context.Accounts.FirstOrDefaultAsync(a => a.Number.Equals(number));
+        }   
+
         public async Task<Account?> GetAccountByNumberAndAgency(int number, int agency)
         {
             return await _context.Accounts.FirstOrDefaultAsync(a => a.Number.Equals(number) && a.Agency.Equals(agency));

@@ -35,7 +35,6 @@ public partial record class KeyDTO : IValidatableObject
 {
     private static readonly Dictionary<string, string> ValidationPatterns = new()
     {
-        ["CPF"] = @"^\d{3}\.\d{3}\.\d{3}-\d{2}$",
         ["Email"] = @"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$",
         ["Phone"] = @"^\(\d{2}\)\s9\s\d{4}-\d{4}$"
     };
@@ -67,8 +66,6 @@ public record class UserDTO
 {
     [Required(ErrorMessage = "CPF is required.")]
     [StringLength(14, ErrorMessage = "CPF must have 14 characters.")]
-    [RegularExpression(@"^\d{3}\.\d{3}\.\d{3}-\d{2}$", ErrorMessage = "Invalid CPF. Must be in the format 000.000.000-00.")]
-
     public required string CPF { get; set; }
 }
 

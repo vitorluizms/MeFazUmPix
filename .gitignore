@@ -1,1 +1,7 @@
 bin/
+
+.k6/seed/users.json
+.k6/seed/accounts.json
+.k6/seed/payments.json
+.k6/seed/pixKeys.json
+.k6/seed/paymentProviders.json

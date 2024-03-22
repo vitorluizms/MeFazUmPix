@@ -25,17 +25,9 @@ public class KeysService
         if (dto.Type == "CPF" && dto.Value != dto.CPF) throw new BadRequestError("CPF and Value must be the same");
 
         Users user = await ValidateUser(dto.CPF);
-        List<Account> accounts = await _accountRepository.GetAccountsByUserId(user.Id);
+        Account? account = await _accountRepository.GetAccountByNumber(dto.Number) ?? await CreateNewAccount(user.Id, dto.Number, dto.Agency, id);
 
-        if (!accounts.Any(a => a.Number == dto.Number && a.Agency == dto.Agency))
-        {
-            Account newAccount = await CreateNewAccount(user.Id, dto.Number, dto.Agency, id);
-#pragma warning disable IDE0305
-            accounts = accounts.Append(newAccount).ToList();
-        }
-
-        await ValidateKeysByUser(dto.Type, user.Id, dto.Value, dto.Number, dto.Agency);
-        Account account = accounts.First(a => a.Number == dto.Number && a.Agency == dto.Agency);
+        await ValidateKeysByUser(dto.Type, user.Id, dto.Value, account.Id);
         PixKeys key = await _keyRepository.CreateKey(dto.Type, dto.Value, account.Id, id);
 
         return key;
@@ -54,21 +46,18 @@ public class KeysService
         return await _accountRepository.CreateAccount(id, number, agency, paymentProviderId);
     }
 
-    private async Task ValidateKeysByUser(string type, int id, string value, int number, int agency)
+    private async Task ValidateKeysByUser(string type, int id, string value, int accountId)
     {
         List<PixKeys> keys = await _keyRepository.GetPixKeyByUserId(id);
 
         if (keys.Count == 20) throw new ConflictError("User already has 20 keys");
 
-        else if (type == "CPF")
-        {
-            if (keys.Any(k => k.Type == "CPF")) throw new ConflictError("User already has a CPF key");
-        }
+        else if (type == "CPF" && keys.Any(k => k.Type == "CPF")) throw new ConflictError("User already has a CPF key");
 
         else if (keys.Any(k => k.Value == value)) throw new ConflictError("Key already exists");
 
-        List<PixKeys> keysByAccount = await _keyRepository.AccountWithFiveOrMorePixKeys(number, agency);
-        if (keysByAccount.Count >= 5) throw new ConflictError("This account have 5 keys already");
+        IEnumerable<IGrouping<int, PixKeys>> accountWith5Keys = keys.GroupBy(k => k.AccountId).Where(grupo => grupo.Key == accountId && grupo.Count() == 5);
+        if (accountWith5Keys.Any()) throw new ConflictError("This account have 5 keys already");
     }
 
     public async Task<PixKeys> GetKeyByValue(string type, string value)

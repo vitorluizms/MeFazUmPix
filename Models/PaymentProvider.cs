@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace MyWallet.Models
 {
-    public class PaymentProvider : BaseEntity   
+    public class PaymentProvider : BaseEntity
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -17,6 +17,8 @@ namespace MyWallet.Models
 
         [Required]
         public required string Token { get; set; }
+        [Required]
+        public required string WebHook { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public new DateTime? UpdatedAt { get; set; } = DateTime.UtcNow;
