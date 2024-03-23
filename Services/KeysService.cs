@@ -31,7 +31,6 @@ public class KeysService
         }
 
         Users user = await ValidateUser(dto.CPF);
-        if (user.CPF != dto.CPF) throw new BadRequestError("CPF does not match the user's CPF");
         if (user.Accounts is not null) // Check if user.Accounts is not null
         {
             ValidateKeysByUser(user.Accounts, dto.Value);
@@ -39,23 +38,15 @@ public class KeysService
 
         Account? account = user.Accounts?.FirstOrDefault(a => a.Agency == dto.Agency && a.Number == dto.Number);
 
-        if (account is null)
-        {
-            await ValidateAccount(dto.Number, dto.Agency);
-        }
-
-        if (account is not null)
-        {
-            ValidatePixKeysByAccount(account.PixKeys);
-
-            PixKeys key = await _keyRepository.CreateKey(dto.Type, dto.Value, account.Id, id);
-            return key;
-        }
+        if (account is not null) ValidatePixKeysByAccount(account.PixKeys);
         else
         {
-            PixKeys key = await _keyRepository.CreateKeyAndAccountTransaction(new CreateKeyAndAccountTransactionDTO { Type = dto.Type, Value = dto.Value, Number = dto.Number, Agency = dto.Agency, PaymentProviderId = id, UserId = user.Id });
-            return key;
+            await ValidateAccount(dto.Number, dto.Agency);
+            account = await _accountRepository.CreateAccount(user.Id, dto.Number, dto.Agency, id);
         }
+        PixKeys key = await _keyRepository.CreateKey(dto.Type, dto.Value, account.Id, id);
+        return key;
+
     }
 
     public async Task<Users> ValidateUser(string cpf)

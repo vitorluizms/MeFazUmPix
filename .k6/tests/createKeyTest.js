@@ -3,10 +3,16 @@ import { sleep } from 'k6';
 import { SharedArray } from 'k6/data';
 
 export const options = {
-  vus: 100,
-  duration: '60s',
+  scenarios: {
+    high_usage: {
+      executor: 'constant-arrival-rate',
+      duration: '60s',
+      preAllocatedVUs: 100,
+      rate: 30000,
+      timeUnit: '60s',
+    },
+  },
 };
-
 const data = new SharedArray('users', () => {
   const result = JSON.parse(open('../seed/users.json'));
   return result;

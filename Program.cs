@@ -17,7 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(Options =>
     string database = builder.Configuration["Database:Database"] ?? string.Empty;
     string password = builder.Configuration["Database:Password"] ?? string.Empty;
 
-    string connectionString = $"Host={host};Port={port};Username={username};Password={password};Database={database};MaxPoolSize=100;Pooling=true;";
+    string connectionString = $"Host={host};Port={port};Username={username};Password={password};Database={database};MaxPoolSize=300;";
     Options.UseNpgsql(connectionString);
 });
 

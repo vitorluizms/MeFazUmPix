@@ -67,5 +67,9 @@ public class AppDbContext(DbContextOptions<AppDbContext> Options) : DbContext(Op
         modelBuilder.Entity<PixKeys>()
             .HasIndex(pk => pk.Value)
             .IsUnique();
+
+        modelBuilder.Entity<PaymentProvider>()
+            .HasIndex(pp => pp.Token)
+            .IsUnique();
     }
 }

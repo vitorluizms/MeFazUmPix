@@ -16,7 +16,7 @@ namespace MyWallet.Repositories
         public async Task<Account?> GetAccountByNumber(int number)
         {
             return await _context.Accounts.FirstOrDefaultAsync(a => a.Number.Equals(number));
-        }   
+        }
 
         public async Task<Account?> GetAccountByNumberAndAgency(int number, int agency)
         {
