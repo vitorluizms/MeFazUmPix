@@ -24,40 +24,78 @@ public class KeysService
     {
         if (dto.Type == "CPF" && dto.Value != dto.CPF) throw new BadRequestError("CPF and Value must be the same");
 
+        if (await _keyRepository.GetOnlyPixKeyByValue(dto.Value) is not null)
+        {
+            Console.WriteLine("Key already exists");
+            throw new ConflictError("Key already exists");
+        }
+
         Users user = await ValidateUser(dto.CPF);
-        Account? account = await _accountRepository.GetAccountByNumber(dto.Number) ?? await CreateNewAccount(user.Id, dto.Number, dto.Agency, id);
+        if (user.CPF != dto.CPF) throw new BadRequestError("CPF does not match the user's CPF");
+        if (user.Accounts is not null) // Check if user.Accounts is not null
+        {
+            ValidateKeysByUser(user.Accounts, dto.Value);
+        }
 
-        await ValidateKeysByUser(dto.Type, user.Id, dto.Value, account.Id);
-        PixKeys key = await _keyRepository.CreateKey(dto.Type, dto.Value, account.Id, id);
+        Account? account = user.Accounts?.FirstOrDefault(a => a.Agency == dto.Agency && a.Number == dto.Number);
 
-        return key;
+        if (account is null)
+        {
+            await ValidateAccount(dto.Number, dto.Agency);
+        }
+
+        if (account is not null)
+        {
+            ValidatePixKeysByAccount(account.PixKeys);
+
+            PixKeys key = await _keyRepository.CreateKey(dto.Type, dto.Value, account.Id, id);
+            return key;
+        }
+        else
+        {
+            PixKeys key = await _keyRepository.CreateKeyAndAccountTransaction(new CreateKeyAndAccountTransactionDTO { Type = dto.Type, Value = dto.Value, Number = dto.Number, Agency = dto.Agency, PaymentProviderId = id, UserId = user.Id });
+            return key;
+        }
     }
 
     public async Task<Users> ValidateUser(string cpf)
     {
-        Users? user = await _userRepository.GetUserByCPF(cpf) ?? throw new NotFoundError("User not found");
+        Users? user = await _userRepository.GetUserByCpfIncludeAccountsThenIncludePixKeys(cpf) ?? throw new NotFoundError("User not found");
 
         return user;
     }
 
-    private async Task<Account> CreateNewAccount(int id, int number, int agency, int paymentProviderId)
+    public async Task ValidateAccount(int number, int agency)
     {
-        // Create a new Account if user doesn't have any account or if the account doesn't exist
-        return await _accountRepository.CreateAccount(id, number, agency, paymentProviderId);
+        if (await _accountRepository.GetAccountByNumberAndAgency(number, agency) is not null)
+        {
+            throw new ConflictError("This account pertains to another user");
+        }
     }
 
-    private async Task ValidateKeysByUser(string type, int id, string value, int accountId)
+
+    private static void ValidatePixKeysByAccount(ICollection<PixKeys>? pixKeys)
     {
-        List<PixKeys> keys = await _keyRepository.GetPixKeyByUserId(id);
+        if (pixKeys is not null && pixKeys.Count >= 5)
+        {
+            throw new ConflictError("This account have 5 keys already");
+        }
+    }
 
-        if (keys.Count == 20) throw new ConflictError("User already has 20 keys");
+    private static void ValidateKeysByUser(ICollection<Account> accounts, string value)
+    {
+        int totalKeysCount = 0;
+        bool hasCpfKey = false;
 
-        else if (type == "CPF" && keys.Any(k => k.Type == "CPF")) throw new ConflictError("User already has a CPF key");
+        foreach (var account in accounts)
+        {
+            totalKeysCount += account.PixKeys?.Count ?? 0;
+            hasCpfKey = account.PixKeys?.Any(k => k.Type == "CPF") ?? false;
+        }
 
-        else if (keys.Any(k => k.Value == value)) throw new ConflictError("Key already exists");
+        if (totalKeysCount >= 20) throw new ConflictError("User already has 20 keys");
 
-        IEnumerable<IGrouping<int, PixKeys>> accountWith5Keys = keys.GroupBy(k => k.AccountId).Where(grupo => grupo.Key == accountId && grupo.Count() == 5);
-        if (accountWith5Keys.Any()) throw new ConflictError("This account have 5 keys already");
+        if (hasCpfKey) throw new ConflictError("User already has a CPF key");
     }
 
     public async Task<PixKeys> GetKeyByValue(string type, string value)

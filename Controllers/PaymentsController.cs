@@ -38,7 +38,6 @@ public class PaymentsController : ControllerBase
     [HttpPatch("{id}/{status}")]
     public async Task<IActionResult> UpdatePaymentStatus(int id, string status)
     {
-        Console.WriteLine("Updating payment status");
         await _paymentsService.UpdatePaymentStatus(id, status);
         return Ok();
     }

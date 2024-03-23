@@ -68,32 +68,4 @@ public class AppDbContext(DbContextOptions<AppDbContext> Options) : DbContext(Op
             .HasIndex(pk => pk.Value)
             .IsUnique();
     }
-
-    // Update the UpdatedAt field before saving
-    public override int SaveChanges()
-    {
-        OnBeforeSaving();
-        return base.SaveChanges();
-    }
-
-    public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        OnBeforeSaving();
-        return await base.SaveChangesAsync(cancellationToken);
-    }
-
-    private void OnBeforeSaving()
-    {
-        var entries = ChangeTracker.Entries()
-            .Where(e => e.Entity is BaseEntity && (
-                e.State == EntityState.Added
-                || e.State == EntityState.Modified));
-
-        foreach (var entry in entries)
-        {
-            ((BaseEntity)entry.Entity).UpdatedAt = DateTime.UtcNow;
-        }
-    }
-
-
 }

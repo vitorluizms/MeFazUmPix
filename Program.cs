@@ -17,7 +17,7 @@ builder.Services.AddDbContext<AppDbContext>(Options =>
     string database = builder.Configuration["Database:Database"] ?? string.Empty;
     string password = builder.Configuration["Database:Password"] ?? string.Empty;
 
-    string connectionString = $"Host={host};Port={port};Username={username};Password={password};Database={database}";
+    string connectionString = $"Host={host};Port={port};Username={username};Password={password};Database={database};MaxPoolSize=100;Pooling=true;";
     Options.UseNpgsql(connectionString);
 });
 
@@ -37,11 +37,12 @@ builder.Services.AddScoped<AuthorizationMiddleware>();
 builder.Services.AddScoped<PaymentProviderRepository>();
 builder.Services.AddScoped<GetKeyByValueDTO>();
 builder.Services.AddScoped<PaymentsService>();
-builder.Services.AddScoped<MessageService>();
 builder.Services.AddScoped<PaymentsRepository>();
 
+builder.Services.AddSingleton<MessageService>();
+
 IConfigurationSection queueConfigurationSection = builder.Configuration.GetSection("QueueSettings");
-builder.Services.Configure<QueueConfig>(queueConfigurationSection); 
+builder.Services.Configure<QueueConfig>(queueConfigurationSection);
 
 var app = builder.Build();
 

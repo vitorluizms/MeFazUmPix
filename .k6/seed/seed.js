@@ -48,9 +48,9 @@ async function run() {
   pixKeys = await populate('PixKeys', pixKeys);
   generateJson('./seed/pixKeys.json', pixKeys);
 
-//   let payments = await generatePayments(accounts, pixKeys);
-//   payments = await populate('Payments', payments);
-//   generateJson('./seed/payments.json', payments);
+  //   let payments = await generatePayments(accounts, pixKeys);
+  //   payments = await populate('Payments', payments);
+  //   generateJson('./seed/payments.json', payments);
 
   console.log('Closing DB connection...');
   await knex.destroy();
@@ -68,7 +68,7 @@ function generatePaymentProviders() {
 
   for (let i = 0; i < PSP; i++) {
     paymentProviders.push({
-      Token: TOKEN_PROVIDER,
+      Token: faker.string.uuid().substring(0, 32),
       Name: faker.company.name(),
       Webhook: 'http://localhost:5039/payments/pix',
       CreatedAt: new Date(Date.now()).toISOString(),

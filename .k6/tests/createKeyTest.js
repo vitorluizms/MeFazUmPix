@@ -3,8 +3,8 @@ import { sleep } from 'k6';
 import { SharedArray } from 'k6/data';
 
 export const options = {
-  vus: 100, // virtual users
-  duration: '20s', // duration of the test in seconds
+  vus: 100,
+  duration: '60s',
 };
 
 const data = new SharedArray('users', () => {
@@ -12,31 +12,45 @@ const data = new SharedArray('users', () => {
   return result;
 });
 
+const PSPsData = new SharedArray('paymentProviders', () => {
+  const result = JSON.parse(open('../seed/paymentProviders.json'));
+  return result;
+});
+
 export default () => {
   const validPSPToken =
-    'VPZxeLCk9vxZ5bOqtzJduCJARPLH1ruyrI89GY0RCdJ6cHvzJ4FlAHsSG85Wmy9i';
+    PSPsData[Math.floor(Math.random() * PSPsData.length)].Token;
   const user = data[Math.floor(Math.random() * data.length)];
 
   const keyData = {
     key: {
-      value: `${Date.now()}${Math.floor(Math.random() * 10)}`,
+      value: `${Date.now()}${Math.floor(Math.random() * 100)}`,
       type: 'Random',
     },
     user: {
       cpf: user.CPF,
     },
     account: {
-      number: `${Date.now()}${Math.floor(Math.random() * 10)}`,
-      agency: `${Date.now()}${Math.floor(Math.random() * 10)}`,
+      number: generateRandomNumber(1, 99999999),
+      agency: generateRandomNumber(1, 9999),
     },
   };
   const body = JSON.stringify(keyData);
+  console.log(`Creating key: ${keyData.key.value}`);
 
   const headers = {
     'Content-Type': 'application/json',
     Authorization: `${validPSPToken}`,
   };
-  const response = http.post('http://localhost:5090/keys', body, {
+  const response = http.post('http://localhost:5089/keys', body, {
     headers: headers,
   });
+
+  if (response.status !== 201) {
+    console.log(`Failed to create key: ${response.body}`);
+  }
 };
+
+function generateRandomNumber(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}

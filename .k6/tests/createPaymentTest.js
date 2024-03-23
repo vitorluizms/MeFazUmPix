@@ -6,13 +6,15 @@ export const options = {
   vus: 120, // virtual users
   duration: '60s', // duration of the test in seconds
 };
-
-const PSP_TOKEN =
-  'VPZxeLCk9vxZ5bOqtzJduCJARPLH1ruyrI89GY0RCdJ6cHvzJ4FlAHsSG85Wmy9i';
 const MAX_PAYMENT_AMOUNT = 300000;
 
 const keysData = new SharedArray('pixKeys', () => {
   const result = JSON.parse(open('../seed/pixKeys.json'));
+  return result;
+});
+
+const PSPsData = new SharedArray('paymentProviders', () => {
+  const result = JSON.parse(open('../seed/paymentProviders.json'));
   return result;
 });
 
@@ -28,6 +30,7 @@ const usersData = new SharedArray('users', () => {
 
 export default () => {
   const randomPixKey = keysData[Math.floor(Math.random() * keysData.length)];
+  const PSP_TOKEN = PSPsData[Math.floor(Math.random() * PSPsData.length)].Token;
 
   // const randomAccount =
   //   accountsData[Math.floor(Math.random() * accountsData.length)];

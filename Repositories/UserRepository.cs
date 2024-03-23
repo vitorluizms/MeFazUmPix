@@ -13,5 +13,14 @@ namespace MyWallet.Repositories
         {
             return await _context.Users.FirstOrDefaultAsync(u => u.CPF.Equals(cpf));
         }
+
+        public async Task<Users?> GetUserByCpfIncludeAccountsThenIncludePixKeys(string cpf)
+        {
+            return await _context.Users
+              .Where(u => u.Accounts != null)
+              .Include(u => u.Accounts)!
+              .ThenInclude(a => a.PixKeys)
+              .FirstOrDefaultAsync(u => u.CPF == cpf);
+        }
     }
 }

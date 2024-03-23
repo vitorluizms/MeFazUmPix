@@ -54,7 +54,6 @@ public class PaymentsService
     private async Task ValidateDuplicatedPayment(PaymentIdempotenceKey key)
     {
         Payments? payments = await _paymentsRepository.GetPaymentByIdempotenceKey(key, MIN_PAYMENT_INTERVAL);
-        Console.WriteLine($"Payments: {payments?.Id}");
 
         if (payments != null) throw new BadRequestError("Duplicated payment");
     }

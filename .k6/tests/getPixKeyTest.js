@@ -12,9 +12,13 @@ const keysData = new SharedArray('pixKeys', () => {
   return result;
 });
 
+const PSPsData = new SharedArray('paymentProviders', () => {
+  const result = JSON.parse(open('../seed/paymentProviders.json'));
+  return result;
+})
+
 export default () => {
-  const validPSPToken =
-    'VPZxeLCk9vxZ5bOqtzJduCJARPLH1ruyrI89GY0RCdJ6cHvzJ4FlAHsSG85Wmy9i';
+  const validPSPToken = PSPsData[Math.floor(Math.random() * PSPsData.length)].Token;
   const randomPixKey = keysData[Math.floor(Math.random() * keysData.length)];
 
   const headers = {
