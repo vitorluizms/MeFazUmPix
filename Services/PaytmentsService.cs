@@ -40,7 +40,7 @@ public class PaymentsService
         Payments payment = await _paymentsRepository.CreatePayment(dto.PaymentToEntity(key.Id, account.Id));
         PaymentMessageDTO message = new(payment.Id, dto);
 
-        _messageService.SendMessage(message);
+        _messageService.SendPaymentMessage(message, "payments");
 
         return payment.Id;
 

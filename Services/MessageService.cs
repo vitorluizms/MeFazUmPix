@@ -12,32 +12,30 @@ public class MessageService(IOptions<QueueConfig> queueConfig)
     private readonly string _hostName = queueConfig.Value.HostName;
     private readonly string _userName = queueConfig.Value.UserName;
     private readonly string _password = queueConfig.Value.Password;
-    private readonly string _queueName = queueConfig.Value.QueueName;
 
-    public void SendMessage(PaymentMessageDTO payment)
+    public void SendPaymentMessage(object obj, string queueName)
     {
         ConnectionFactory factory = new() { HostName = _hostName, UserName = _userName, Password = _password };
         IConnection _connection = factory.CreateConnection();
         IModel _channel = _connection.CreateModel();
 
         _channel.QueueDeclare(
-            queue: _queueName,
+            queue: queueName,
             durable: true,
             exclusive: false,
             autoDelete: false,
             arguments: null
         );
- 
-        string json = JsonSerializer.Serialize(payment);
-        var body = Encoding.UTF8.GetBytes(json);
 
+        string json = JsonSerializer.Serialize(obj);
+        var body = Encoding.UTF8.GetBytes(json);
 
         IBasicProperties properties = _channel.CreateBasicProperties();
         properties.Persistent = true;
 
         _channel.BasicPublish(
             exchange: String.Empty,
-            routingKey: _queueName,
+            routingKey: queueName,
             basicProperties: properties,
             body: body
         );
