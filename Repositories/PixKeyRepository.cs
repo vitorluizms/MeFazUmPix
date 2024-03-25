@@ -52,7 +52,7 @@ public class KeyRepository
         try
         {
             Account account = await _accountRepository.CreateAccount(dto.UserId, dto.Number, dto.Agency, dto.PaymentProviderId);
-            Console.WriteLine(dto.Value);
+
             PixKeys key = await CreateKey(dto.Type, dto.Value, account.Id, dto.PaymentProviderId);
 
             transaction.Commit();

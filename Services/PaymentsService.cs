@@ -28,7 +28,7 @@ public class PaymentsService
     public async Task<int> CreatePayment(CreatePaymentDTO dto, PaymentProvider paymentProvider)
     {
         Users user = await _userRepository.GetUserByCPFIncludeAccounts(dto.ToEntity().OriginUserCPF) ?? throw new NotFoundError("User not found");
-        Account account = user.Accounts?.First(a => a.Number.Equals(dto.ToEntity().OriginAccountNumber) && a.Agency.Equals(dto.ToEntity().OriginAccountAgency)) ?? throw new NotFoundError("Account not found");
+        Account account = user.Accounts?.FirstOrDefault(a => a.Number.Equals(dto.ToEntity().OriginAccountNumber) && a.Agency.Equals(dto.ToEntity().OriginAccountAgency)) ?? throw new NotFoundError("Account not found");
 
         if (account.UserId != user.Id) throw new UnauthorizedError("User is not the owner of the origin account");
 

@@ -61,7 +61,7 @@ public class KeysService
     public async Task<Users> ValidateUser(string cpf)
     {
         Users? user = await _userRepository.GetUserByCpfIncludeAccountsThenIncludePixKeys(cpf) ?? throw new NotFoundError("User not found");
-        
+
         return user;
     }
 
