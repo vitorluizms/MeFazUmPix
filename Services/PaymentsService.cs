@@ -40,7 +40,7 @@ public class PaymentsService
         await ValidateDuplicatedPayment(idempotenceKey);
 
         Payments payment = await _paymentsRepository.CreatePayment(dto.PaymentToEntity(key.Id, account.Id));
-        PaymentMessageDTO message = new(payment.Id, dto);
+        PaymentMessageDTO message = new(payment.Id, dto, paymentProvider.Webhook);
 
         _messageService.SendPaymentMessage(message, "payments");
 
