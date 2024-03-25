@@ -5,3 +5,4 @@ bin/
 .k6/seed/payments.json
 .k6/seed/pixKeys.json
 .k6/seed/paymentProviders.json
+.k6/seed/transactions.ndjson

@@ -2,7 +2,7 @@ const { v4: uuid } = require('uuid');
 const { faker } = require('@faker-js/faker');
 const dotenv = require('dotenv');
 const fs = require('fs');
-
+const ndjson = require('ndjson');
 dotenv.config();
 
 const knex = require('knex')({
@@ -65,6 +65,26 @@ async function populate(tableName, entities) {
 }
 
 const generateJson = (filepath, data) => {
+  const writer = ndjson.stringify();
+  const filePath = fs.createWriteStream(`./seed/transactions.ndjson`);
+  writer.pipe(filePath);
+  const rightStatusPercentage = 50;
+
+  data.forEach((d, index) => {
+    const status =
+      Math.random() * 100 < rightStatusPercentage
+        ? d.Status
+        : d.Status === 'SUCCESS'
+        ? 'FAILED'
+        : 'SUCCESS';
+
+    if (index % 2 === 0)
+      writer.write({
+        id: d.Id,
+        status,
+      });
+  });
+
   if (fs.existsSync(filepath)) {
     fs.unlinkSync(filepath);
   }
