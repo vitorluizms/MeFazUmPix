@@ -3,8 +3,15 @@ import { sleep } from 'k6';
 import { SharedArray } from 'k6/data';
 
 export const options = {
-  vus: 120, // virtual users
-  duration: '60s', // duration of the test in seconds
+  scenarios: {
+    high_usage: {
+      executor: 'constant-arrival-rate',
+      duration: '60s',
+      preAllocatedVUs: 90,
+      rate: 3000,
+      timeUnit: '60s',
+    },
+  },
 };
 const MAX_PAYMENT_AMOUNT = 300000;
 
@@ -29,28 +36,26 @@ const usersData = new SharedArray('users', () => {
 });
 
 export default () => {
+  console.log('Creating payment...');
   const randomPixKey = keysData[Math.floor(Math.random() * keysData.length)];
   const PSP_TOKEN = PSPsData[Math.floor(Math.random() * PSPsData.length)].Token;
-
-  // const randomAccount =
-  //   accountsData[Math.floor(Math.random() * accountsData.length)];
-
-  // const userByAccount = usersData.find(u => u.Id === randomAccount.UserId);
-
+  const randomAccount =
+    accountsData[Math.floor(Math.random() * accountsData.length)];
+  console.log(randomAccount);
   const body = {
     user: {
-      cpf: '57795',
+      cpf: randomAccount.Cpf,
     },
     account: {
-      number: 56204701,
-      agency: 10075231,
+      number: randomAccount.Number,
+      agency: randomAccount.Agency,
     },
     key: {
       value: randomPixKey.Value,
       type: randomPixKey.Type,
     },
     amount: Math.floor(Math.random() * MAX_PAYMENT_AMOUNT),
-    description: `${new Date(Date.now()).toISOString()}`.slice(-20),
+    description: `${new Date(Date.now()).toISOString()}`,
   };
 
   const bodyString = JSON.stringify({
@@ -65,7 +70,7 @@ export default () => {
     Authorization: PSP_TOKEN,
   };
 
-  const response = http.post('http://localhost:8080/payments', bodyString, {
+  const response = http.post('http://localhost:5089/payments', bodyString, {
     headers,
   });
 

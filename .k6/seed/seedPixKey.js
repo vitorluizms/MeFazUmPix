@@ -17,18 +17,25 @@ const ERASE_DATA = false;
 
 async function run() {
   if (ERASE_DATA) {
-    await knex('PaymentProviders').del();
-    await knex('Users').del();
     await knex('Accounts').del();
     await knex('PixKeys').del();
     await knex('Payments').del();
   }
   const start = new Date();
 
-  let accounts = await generateAccounts();
-  console.log(accounts);
-  accounts = await populate('Accounts', accounts);
-  generateJson('./seed/accounts.json', accounts);
+  let accountsJSON = await generateAccounts();
+  const accounts = accountsJSON.map((account) => {
+    return {
+      Agency: account.Agency,
+      Number: account.Number,
+      CreatedAt: account.CreatedAt,
+      UpdatedAt: account.UpdatedAt,
+      PaymentProviderId: account.PaymentProviderId,
+      UserId: account.UserId,
+    }
+  })
+  await populate('Accounts', accounts);
+  generateJson('./seed/accounts.json', accountsJSON);
 
   let pixKeys = await generatePixKeys();
   pixKeys = await populate('PixKeys', pixKeys);
@@ -48,7 +55,7 @@ async function generateAccounts() {
   console.log(`Generating ${ACCOUNTS} payment provider accounts...`);
   const accounts = [];
 
-  const users = await knex.select('Id').table('Users');
+  const users = await knex.select('Id', 'CPF').table('Users');
   const psps = await knex.select('Id').table('PaymentProviders');
   console.log(psps);
 
@@ -62,6 +69,7 @@ async function generateAccounts() {
       UpdatedAt: new Date(Date.now()).toISOString(),
       PaymentProviderId: randomPspId.Id,
       UserId: randomUserId.Id,
+      Cpf: randomUserId.CPF,
     });
   }
   return accounts;

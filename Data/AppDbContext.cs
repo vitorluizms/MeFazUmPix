@@ -71,5 +71,8 @@ public class AppDbContext(DbContextOptions<AppDbContext> Options) : DbContext(Op
         modelBuilder.Entity<PaymentProvider>()
             .HasIndex(pp => pp.Token)
             .IsUnique();
+
+        modelBuilder.Entity<Payments>()
+            .HasIndex(p => p.CreatedAt);
     }
 }

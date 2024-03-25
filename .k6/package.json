@@ -4,6 +4,7 @@
     "seed": "node seed/seed.js",
     "seed:user-psp": "node ./seed/seedUser && node ./seed/seedPSP.js",
     "seed:pix-key": "npm run seed:user-psp && node ./seed/seedPixKey.js",
+    "seed:payment": "node ./seed/seedPayments.js",
     "test:post-keys": "k6 run ./tests/createKeyTest.js",
     "test:post-payments": "k6 run ./tests/createPaymentTest.js",
     "test:get-keys": "k6 run ./tests/getPixKeyTest.js"

@@ -31,7 +31,7 @@ public class KeysService
         }
 
         Users user = await ValidateUser(dto.CPF);
-        if (user.Accounts is not null) // Check if user.Accounts is not null
+        if (user.Accounts is not null)
         {
             ValidateKeysByUser(user.Accounts, dto.Value);
         }
@@ -42,17 +42,26 @@ public class KeysService
         else
         {
             await ValidateAccount(dto.Number, dto.Agency);
-            account = await _accountRepository.CreateAccount(user.Id, dto.Number, dto.Agency, id);
+            PixKeys keyTransaction = await _keyRepository.CreateKeyAndAccountTransaction(new CreateKeyAndAccountTransactionDTO
+            {
+                Type = dto.Type,
+                Value = dto.Value,
+                Number = dto.Number,
+                Agency = dto.Agency,
+                PaymentProviderId = id,
+                UserId = user.Id
+            });
+
+            return keyTransaction;
         }
         PixKeys key = await _keyRepository.CreateKey(dto.Type, dto.Value, account.Id, id);
         return key;
-
     }
 
     public async Task<Users> ValidateUser(string cpf)
     {
         Users? user = await _userRepository.GetUserByCpfIncludeAccountsThenIncludePixKeys(cpf) ?? throw new NotFoundError("User not found");
-
+        
         return user;
     }
 
@@ -67,7 +76,8 @@ public class KeysService
 
     private static void ValidatePixKeysByAccount(ICollection<PixKeys>? pixKeys)
     {
-        if (pixKeys is not null && pixKeys.Count >= 5)
+        const int MAX_ACCOUNT_KEYS = 5;
+        if (pixKeys is not null && pixKeys.Count >= MAX_ACCOUNT_KEYS)
         {
             throw new ConflictError("This account have 5 keys already");
         }
@@ -77,6 +87,7 @@ public class KeysService
     {
         int totalKeysCount = 0;
         bool hasCpfKey = false;
+        const int MAX_USER_KEYS = 20;
 
         foreach (var account in accounts)
         {
@@ -84,7 +95,7 @@ public class KeysService
             hasCpfKey = account.PixKeys?.Any(k => k.Type == "CPF") ?? false;
         }
 
-        if (totalKeysCount >= 20) throw new ConflictError("User already has 20 keys");
+        if (totalKeysCount >= MAX_USER_KEYS) throw new ConflictError("User already has 20 keys");
 
         if (hasCpfKey) throw new ConflictError("User already has a CPF key");
     }

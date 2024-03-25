@@ -38,6 +38,7 @@ builder.Services.AddScoped<PaymentProviderRepository>();
 builder.Services.AddScoped<GetKeyByValueDTO>();
 builder.Services.AddScoped<PaymentsService>();
 builder.Services.AddScoped<PaymentsRepository>();
+builder.Services.AddScoped<ConcilliationService>();
 
 builder.Services.AddSingleton<MessageService>();
 

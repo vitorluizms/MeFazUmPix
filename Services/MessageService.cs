@@ -26,9 +26,9 @@ public class MessageService(IOptions<QueueConfig> queueConfig)
             autoDelete: false,
             arguments: null
         );
-
         string json = JsonSerializer.Serialize(obj);
         var body = Encoding.UTF8.GetBytes(json);
+        Console.WriteLine(json);
 
         IBasicProperties properties = _channel.CreateBasicProperties();
         properties.Persistent = true;

@@ -9,15 +9,15 @@ namespace MyWallet.Repositories
 
         private readonly AppDbContext _context = context;
 
-        public async Task<Users?> GetUserByCPF(string cpf)
+        public async Task<Users?> GetUserByCPFIncludeAccounts(string cpf)
         {
-            return await _context.Users.FirstOrDefaultAsync(u => u.CPF.Equals(cpf));
+            return await _context.Users.Include(u => u.Accounts).FirstOrDefaultAsync(u => u.CPF.Equals(cpf));
         }
 
         public async Task<Users?> GetUserByCpfIncludeAccountsThenIncludePixKeys(string cpf)
         {
             return await _context.Users
-              .Where(u => u.Accounts != null)
+            .Where(u => u.Accounts != null)
               .Include(u => u.Accounts)!
               .ThenInclude(a => a.PixKeys)
               .FirstOrDefaultAsync(u => u.CPF == cpf);

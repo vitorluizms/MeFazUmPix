@@ -48,9 +48,9 @@ async function run() {
   pixKeys = await populate('PixKeys', pixKeys);
   generateJson('./seed/pixKeys.json', pixKeys);
 
-  //   let payments = await generatePayments(accounts, pixKeys);
-  //   payments = await populate('Payments', payments);
-  //   generateJson('./seed/payments.json', payments);
+    let payments = await generatePayments(accounts, pixKeys);
+    payments = await populate('Payments', payments);
+    generateJson('./seed/payments.json', payments);
 
   console.log('Closing DB connection...');
   await knex.destroy();
