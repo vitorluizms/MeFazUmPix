@@ -35,7 +35,7 @@ export default () => {
   };
 
   const response = http.get(
-    `http://localhost:5089/keys/${randomPixKey.Type}/${randomPixKey.Value}`,
+    `http://localhost:8080/keys/${randomPixKey.Type}/${randomPixKey.Value}`,
     { headers },
   );
 

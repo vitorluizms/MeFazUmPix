@@ -2,6 +2,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.RegularExpressions;
 using MyWallet.Entities;
 using MyWallet.Models;
+using MyWallet.Utils;
 
 namespace MyWallet.DTOs;
 
@@ -35,7 +36,7 @@ public class GetKeyByValueDTO
             },
             User = new User
             {
-                CPF = key.Account?.User?.CPF
+                CPF = CpfUtil.ToMasked(key.Account?.User?.CPF)
             },
             Account = new Account
             {

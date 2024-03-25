@@ -48,7 +48,7 @@ export default () => {
     'Content-Type': 'application/json',
     Authorization: `${validPSPToken}`,
   };
-  const response = http.post('http://localhost:5089/keys', body, {
+  const response = http.post('http://localhost:8080/keys', body, {
     headers: headers,
   });
 
